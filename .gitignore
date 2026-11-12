@@ -4,3 +4,4 @@ dist/
 .idea/
 *.iml
 .vscode/
+hs_err_pid*.log

@@ -59,6 +59,7 @@ public final class HomeController implements PageController {
         content.getChildren().setAll(
                 hero(),
                 moodStrip(),
+                favoriteArtists(),
                 carousel("Top France", "Les titres les plus écoutés en France", "france"),
                 djShortcuts(),
                 carousel("Top Côte d'Ivoire", "Ce qui tourne à Abidjan en ce moment", "ci"),
@@ -200,12 +201,82 @@ public final class HomeController implements PageController {
                 VBox box = new VBox(8, Covers.round(a.coverUrl(), 116), name);
                 box.setAlignment(Pos.TOP_CENTER);
                 box.getStyleClass().add("artist-card");
-                box.setOnMouseClicked(e -> ctx.navigator().navigate(Page.DISCOVER, a.title()));
+                box.setOnMouseClicked(e -> ctx.navigator().navigate(Page.DISCOVER, a));
+                box.getChildren().add(heart(a));
                 row.getChildren().add(box);
             }
             Ui.animateIn(row);
         });
         return new VBox(12, header, horizontal(row));
+    }
+
+    // ------------------------------------------------------------------ artistes favoris
+
+    private VBox favoritesSection;
+
+    private Node favoriteArtists() {
+        favoritesSection = new VBox(12);
+        fillFavorites();
+        ctx.favoritesRevisionProperty().addListener((o, a, b) -> fillFavorites());
+        return favoritesSection;
+    }
+
+    private void fillFavorites() {
+        var favorites = ctx.favoriteArtists().list();
+        Button mix = new Button("Mix de mes artistes", Icons.icon(Icons.HEADPHONES, 14));
+        mix.getStyleClass().add("secondary-button");
+        mix.setDisable(favorites.isEmpty());
+        mix.setOnAction(e -> ctx.navigator().navigate(Page.AI_DJ, DjService.FAVORITES));
+        HBox header = new HBox(12, new VBox(2, Ui.label("Tes artistes", "home-section-title"),
+                Ui.label(favorites.isEmpty() ? "Tes artistes favoris s'afficheront ici"
+                        : favorites.size() + " artiste(s) favori(s) · clique pour voir leurs titres phares", "muted")), Ui.hSpacer(), mix);
+        header.setAlignment(Pos.CENTER_LEFT);
+        if (favorites.isEmpty()) {
+            HBox hint = new HBox(14, Icons.icon(Icons.HEART_OUTLINE, 22), Ui.wrapped("Pendant l'écoute, clique sur le cœur ♡ de la barre de lecture pour "
+                    + "ajouter l'artiste. Tu peux aussi le faire depuis la page d'un artiste dans Découvrir, ou d'un clic droit sur un titre.", "muted"));
+            hint.setAlignment(Pos.CENTER_LEFT);
+            hint.getStyleClass().add("card");
+            favoritesSection.getChildren().setAll(header, hint);
+            return;
+        }
+        HBox row = new HBox(22);
+        for (var fav : favorites) {
+            CatalogEntry a = new CatalogEntry(CatalogEntry.Kind.ARTIST, "deezer", fav.id(), fav.name(), fav.name(), fav.id(),
+                    null, null, fav.picture(), null, null, 0, null, null, null, "https://www.deezer.com/fr/artist/" + fav.id(),
+                    com.hmood.music.PlaybackMode.LINK_ONLY, null);
+            Label name = Ui.label(fav.name(), "artist-name");
+            name.setMaxWidth(120);
+            name.setTextOverrun(OverrunStyle.ELLIPSIS);
+            VBox box = new VBox(8, Covers.round(fav.picture(), 116), name, heart(a));
+            box.setAlignment(Pos.TOP_CENTER);
+            box.getStyleClass().add("artist-card");
+            box.setOnMouseClicked(e -> ctx.navigator().navigate(Page.DISCOVER, a));
+            row.getChildren().add(box);
+        }
+        favoritesSection.getChildren().setAll(header, horizontal(row));
+    }
+
+    /** Petit cœur sous un artiste : ajoute / retire des favoris sans ouvrir la page. */
+    private Button heart(CatalogEntry artist) {
+        Button b = new Button();
+        b.getStyleClass().add("icon-button");
+        Runnable refresh = () -> {
+            boolean fav = ctx.favoriteArtists().isFavorite(artist);
+            b.setGraphic(Icons.icon(fav ? Icons.HEART : Icons.HEART_OUTLINE, 16));
+            b.getStyleClass().remove("active");
+            if (fav) b.getStyleClass().add("active");
+            b.setTooltip(new javafx.scene.control.Tooltip(fav ? "Retirer de mes artistes" : "Ajouter à mes artistes"));
+        };
+        refresh.run();
+        b.setOnAction(e -> {
+            e.consume();
+            b.setDisable(true);
+            ctx.toggleFavoriteArtist(artist, () -> {
+                b.setDisable(false);
+                refresh.run();
+            });
+        });
+        return b;
     }
 
     // ------------------------------------------------------------------ ma musique

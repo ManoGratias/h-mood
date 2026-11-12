@@ -76,6 +76,7 @@ public final class AppContext {
     private final com.hmood.music.service.OfflineService offlineService;
     private final com.hmood.music.service.LyricsService lyricsService;
     private com.hmood.repository.WrappedRepository wrappedRepository;
+    private com.hmood.service.FavoriteArtistsService favoriteArtists;
     private com.hmood.player.GlobalMediaKeys mediaKeys;
     private final MusicDiscoveryService discoveryService;
     private final MusicRecommendationService recommendationService;
@@ -163,6 +164,14 @@ public final class AppContext {
 
         sleepTimer = new SleepTimerService(playerService);
         wrappedRepository = new com.hmood.repository.WrappedRepository(database, user);
+        favoriteArtists = new com.hmood.service.FavoriteArtistsService(
+                new com.hmood.repository.FavoriteArtistsRepository(database, user), name -> {
+                    try {
+                        return discoveryService.searchArtists(name);
+                    } catch (com.hmood.catalog.CatalogException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         mediaKeys = new com.hmood.player.GlobalMediaKeys(playerService::togglePlay, playerService::next,
                 playerService::previous, playerService::pause);
         if (settingsService.globalMediaKeys()) mediaKeys.start();
@@ -233,6 +242,26 @@ public final class AppContext {
 
     public com.hmood.player.GlobalMediaKeys mediaKeys() { return mediaKeys; }
     public com.hmood.repository.WrappedRepository wrapped() { return wrappedRepository; }
+    public com.hmood.service.FavoriteArtistsService favoriteArtists() { return favoriteArtists; }
+
+    /** Ajoute / retire un artiste des favoris (en arrière-plan) puis notifie. */
+    public void toggleFavoriteArtist(com.hmood.music.CatalogEntry e, Runnable onDone) {
+        com.hmood.ui.Async.run(() -> favoriteArtists.toggle(e), (t, error) -> {
+            if (error != null) {
+                notify(error);
+            } else {
+                notify(t.favorite() ? "♥ " + t.artist().name() + " ajouté à tes artistes favoris"
+                        : t.artist().name() + " retiré de tes artistes favoris");
+                favoritesRevision.set(favoritesRevision.get() + 1);
+            }
+            if (onDone != null) onDone.run();
+        });
+    }
+
+    private final javafx.beans.property.IntegerProperty favoritesRevision = new javafx.beans.property.SimpleIntegerProperty();
+
+    /** Change à chaque ajout / retrait d'artiste favori. */
+    public javafx.beans.property.IntegerProperty favoritesRevisionProperty() { return favoritesRevision; }
 
     public void shutdown() {
         if (mediaKeys != null) mediaKeys.stop();

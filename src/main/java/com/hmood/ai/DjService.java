@@ -135,6 +135,14 @@ public final class DjService {
         this.playback = playback;
     }
 
+    /** Univers construit à partir des artistes favoris (identifiants Deezer). */
+    public static Style favoritesStyle(List<String> artistIds) {
+        return new Style(FAVORITES, "Mes artistes", MOMENTS, List.of("artists:" + String.join(",", artistIds)),
+                "Tes artistes favoris · leurs titres les plus écoutés sur Deezer", "#FF5F6D", "#8E54E9");
+    }
+
+    public static final String FAVORITES = "favoris";
+
     public static Optional<Style> style(String key) {
         return STYLES.stream().filter(s -> s.key().equals(key)).findFirst();
     }

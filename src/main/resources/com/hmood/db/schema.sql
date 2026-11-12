@@ -158,3 +158,13 @@ CREATE TABLE IF NOT EXISTS stream_history (
     completed   INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_stream_history_user_date ON stream_history (user_id, played_at);
+
+-- Artistes favoris (fiche Deezer)
+CREATE TABLE IF NOT EXISTS favorite_artists (
+    user_id   INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    artist_id TEXT    NOT NULL,
+    name      TEXT    NOT NULL,
+    picture   TEXT,
+    added_at  TEXT    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, artist_id)
+);

@@ -78,6 +78,14 @@ public final class DjController implements PageController {
             }
             stylesBox.getChildren().add(new VBox(10, Ui.label(group.getValue(), "section-label"), tiles));
         }
+        var favorites = ctx.favoriteArtists().list();
+        if (!favorites.isEmpty()) {
+            Button tile = new Button("Mes artistes (" + favorites.size() + ")");
+            tile.getStyleClass().add("chart-tile");
+            tile.setStyle("-fx-background-color: linear-gradient(to bottom right, #FF5F6D, #8E54E9);");
+            tile.setOnAction(e -> loadFavorites());
+            stylesBox.getChildren().add(0, new VBox(10, Ui.label("TES ARTISTES FAVORIS", "section-label"), new FlowPane(12, 12, tile)));
+        }
         crossfadeSlider.setValue(ctx.player().crossfadeSecondsProperty().get());
         updateCrossfadeLabel();
         crossfadeSlider.valueProperty().addListener((o, a, v) -> {
@@ -88,7 +96,18 @@ public final class DjController implements PageController {
         Ui.fillSlider(crossfadeSlider);
         // Démo : -Dhmood.dj=<univers> lance directement une session
         String demo = System.getProperty("hmood.dj");
-        if (demo != null) DjService.style(demo).ifPresent(st -> load(st.label(), p -> ctx.dj().build(st, p)));
+        if (DjService.FAVORITES.equals(demo)) loadFavorites();
+        else if (demo != null) DjService.style(demo).ifPresent(st -> load(st.label(), p -> ctx.dj().build(st, p)));
+    }
+
+    private void loadFavorites() {
+        List<String> ids = ctx.favoriteArtists().list().stream().map(a -> a.id()).toList();
+        if (ids.isEmpty()) {
+            ctx.notify("Ajoute d'abord des artistes à tes favoris (cœur ♡ dans la barre de lecture ou sur la page d'un artiste).");
+            return;
+        }
+        Style style = DjService.favoritesStyle(ids);
+        load(style.label(), p -> ctx.dj().build(style, p));
     }
 
     private void updateCrossfadeLabel() {
@@ -98,7 +117,9 @@ public final class DjController implements PageController {
 
     @Override
     public void onShow(Object argument) {
-        if (argument instanceof String key) {
+        if (DjService.FAVORITES.equals(argument)) {
+            loadFavorites();
+        } else if (argument instanceof String key) {
             DjService.style(key).ifPresent(st -> load(st.label(), p -> ctx.dj().build(st, p)));
         }
     }

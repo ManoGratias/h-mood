@@ -30,7 +30,7 @@ $jpArgs = @(
     '--main-jar', 'hmood.jar',
     '--main-class', 'com.hmood.app.Launcher',
     '--add-modules', 'java.base,java.desktop,java.logging,java.naming,java.scripting,java.sql,java.xml,java.net.http,java.management,jdk.crypto.ec,jdk.unsupported,jdk.charsets,jdk.localedata,jdk.jsobject,jdk.xml.dom',
-    '--java-options', '-Xmx512m',
+    '--java-options', '-Xmx1024m',
     '--dest', 'dist'
 )
 if (Test-Path 'assets\hmood.ico') { $jpArgs += @('--icon', 'assets\hmood.ico') }

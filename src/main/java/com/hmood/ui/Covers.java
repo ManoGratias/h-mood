@@ -15,7 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Pochettes (extraites des tags à l'import) avec un visuel de repli. */
 public final class Covers {
 
-    private static final Map<String, Image> CACHE = new ConcurrentHashMap<>();
+    private static final int MAX_CACHED = 150;
+    private static final Map<String, java.lang.ref.SoftReference<Image>> CACHE =
+            new java.util.LinkedHashMap<>(256, 0.75f, true) {
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, java.lang.ref.SoftReference<Image>> eldest) {
+                    return size() > MAX_CACHED;
+                }
+            };
 
     private Covers() {
     }
@@ -68,11 +75,27 @@ public final class Covers {
 
     public static Image image(String path) {
         if (path != null && (path.startsWith("http://") || path.startsWith("https://"))) {
-            return CACHE.computeIfAbsent(path, p -> new Image(p, 480, 480, true, true, true));
+            return cached(path, p -> new Image(p, 480, 480, true, true, true));
         }
         if (path == null || path.isBlank() || !Files.isRegularFile(Path.of(path))) {
             return null;
         }
-        return CACHE.computeIfAbsent(path, p -> new Image(Path.of(p).toUri().toString(), 192, 192, true, true, true));
+        return cached(path, p -> new Image(Path.of(p).toUri().toString(), 192, 192, true, true, true));
+    }
+
+    /**
+     * Cache borné (les plus récemment utilisées) à références « douces » : la mémoire est rendue
+     * au besoin, au lieu de garder toutes les pochettes vues depuis le lancement (cause d'un manque de mémoire).
+     */
+    private static Image cached(String key, java.util.function.Function<String, Image> loader) {
+        synchronized (CACHE) {
+            java.lang.ref.SoftReference<Image> ref = CACHE.get(key);
+            Image image = ref == null ? null : ref.get();
+            if (image == null) {
+                image = loader.apply(key);
+                CACHE.put(key, new java.lang.ref.SoftReference<>(image));
+            }
+            return image;
+        }
     }
 }

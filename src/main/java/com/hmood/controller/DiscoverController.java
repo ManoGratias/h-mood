@@ -108,7 +108,9 @@ public final class DiscoverController implements PageController {
 
     @Override
     public void onShow(Object argument) {
-        if (argument instanceof String query && !query.isBlank()) {
+        if (argument instanceof CatalogEntry artist && artist.kind() == Kind.ARTIST) {
+            showArtist(artist);
+        } else if (argument instanceof String query && !query.isBlank()) {
             searchField.setText(query);
             onSearch();
         }
@@ -139,7 +141,43 @@ public final class DiscoverController implements PageController {
         if (!playableTracks.isEmpty()) ctx.player().play(playableTracks, 0);
     }
 
+    /** Page d'un artiste : ses titres phares + bouton « Mes artistes ». */
+    private void showArtist(CatalogEntry artist) {
+        show(force -> ctx.discovery().artistTop(artist));
+        currentArtist = artist;
+        updateArtistButton();
+    }
+
+    private CatalogEntry currentArtist;
+    private Button artistFavButton;
+
+    private void updateArtistButton() {
+        if (artistFavButton == null) {
+            artistFavButton = new Button();
+            artistFavButton.getStyleClass().add("secondary-button");
+            artistFavButton.setOnAction(e -> {
+                if (currentArtist == null) return;
+                artistFavButton.setDisable(true);
+                ctx.toggleFavoriteArtist(currentArtist, () -> {
+                    artistFavButton.setDisable(false);
+                    updateArtistButton();
+                });
+            });
+            HBox header = (HBox) refreshButton.getParent();
+            header.getChildren().add(header.getChildren().indexOf(refreshButton), artistFavButton);
+        }
+        boolean show = currentArtist != null;
+        artistFavButton.setVisible(show);
+        artistFavButton.setManaged(show);
+        if (!show) return;
+        boolean fav = ctx.favoriteArtists().isFavorite(currentArtist);
+        artistFavButton.setText(fav ? "Dans mes artistes" : "Ajouter à mes artistes");
+        artistFavButton.setGraphic(com.hmood.ui.Icons.icon(fav ? com.hmood.ui.Icons.HEART : com.hmood.ui.Icons.HEART_OUTLINE, 16));
+    }
+
     private void show(Load load) {
+        currentArtist = null;
+        if (artistFavButton != null) updateArtistButton();
         reload = () -> run(load, false);
         forceReload = () -> run(load, true);
         reload.run();
@@ -292,7 +330,7 @@ public final class DiscoverController implements PageController {
         MenuItem similar = new MenuItem("Titres similaires");
         similar.setOnAction(ev -> show(force -> ctx.discovery().similar(e)));
         MenuItem top = new MenuItem("Top titres de " + e.artist());
-        top.setOnAction(ev -> show(force -> ctx.discovery().artistTop(e)));
+        top.setOnAction(ev -> showArtist(artistEntry(e)));
         MenuItem album = new MenuItem("Voir l'album");
         album.setOnAction(ev -> show(force -> ctx.discovery().album(e)));
         album.setDisable(e.albumId() == null);
@@ -312,13 +350,23 @@ public final class DiscoverController implements PageController {
         full.setOnAction(ev -> com.hmood.ui.DeezerPlayerWindow.open(ctx, e.title() + " — " + e.artist(), List.of(e)));
         MenuItem open = new MenuItem("Ouvrir sur " + PlaybackService.providerName(e));
         open.setOnAction(ev -> ctx.openLink(e.externalUrl()));
-        return new ContextMenu(full, similar, top, album, info, open);
+        boolean fav = ctx.favoriteArtists().isFavorite(e);
+        MenuItem favorite = new MenuItem(fav ? "Retirer " + e.artist() + " de mes artistes" : "♥ Ajouter " + e.artist() + " à mes artistes");
+        favorite.setDisable(e.artist() == null);
+        favorite.setOnAction(ev -> ctx.toggleFavoriteArtist(e, null));
+        return new ContextMenu(full, favorite, similar, top, album, info, open);
+    }
+
+    /** Fiche « artiste » à partir d'un titre Deezer. */
+    static CatalogEntry artistEntry(CatalogEntry track) {
+        return new CatalogEntry(Kind.ARTIST, track.provider(), track.artistId(), track.artist(), track.artist(),
+                track.artistId(), null, null, null, null, null, 0, null, null, null, null, PlaybackMode.LINK_ONLY, null);
     }
 
     private VBox entityCard(CatalogEntry e) {
         Track pseudo = ctx.musicPlayback().toTrack(e);
         VBox card = TrackCards.card(pseudo, 160, () -> {
-            if (e.kind() == Kind.ARTIST) show(force -> ctx.discovery().artistTop(e));
+            if (e.kind() == Kind.ARTIST) showArtist(e);
             else if (e.kind() == Kind.ALBUM) show(force -> ctx.discovery().album(e));
         });
         if (e.rank() != null) {

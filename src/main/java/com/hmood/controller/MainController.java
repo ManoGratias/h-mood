@@ -335,9 +335,8 @@ public final class MainController implements Navigator {
         trackTitle.setText(t.title());
         trackArtist.setText(t.displayArtist() + (t.album() != null ? " · " + t.album() : "")
                 );
-        favButton.setDisable(t.isRemote()); // morceaux en streaming : pas de favori local
-        favButton.setGraphic(Icons.icon(t.favorite() ? Icons.HEART : Icons.HEART_OUTLINE, 18));
-        toggleClass(favButton, "active", t.favorite());
+        favButton.setDisable(false);
+        updateFavButton(t);
         totalLabel.setText(Durations.format(t.durationMs()));
     }
 
@@ -580,10 +579,37 @@ public final class MainController implements Navigator {
         ctx.player().shuffleProperty().set(!ctx.player().shuffleProperty().get());
     }
 
+    /** Fichier local : morceau favori. Titre en streaming : artiste favori. */
+    private void updateFavButton(Track t) {
+        boolean on;
+        if (t.isRemote()) {
+            var info = ctx.musicPlayback().info(t);
+            on = info.map(e -> ctx.favoriteArtists().isFavorite(e)).orElse(ctx.favoriteArtists().isFavorite(null, t.displayArtist()));
+            tooltip(favButton, on ? "Retirer " + t.displayArtist() + " de tes artistes favoris"
+                    : "Ajouter " + t.displayArtist() + " à tes artistes favoris");
+        } else {
+            on = t.favorite();
+            tooltip(favButton, on ? "Retirer des favoris" : "Ajouter aux favoris");
+        }
+        favButton.setGraphic(Icons.icon(on ? Icons.HEART : Icons.HEART_OUTLINE, 18));
+        toggleClass(favButton, "active", on);
+    }
+
     @FXML
     private void onToggleFavorite() {
         Track current = ctx.player().getCurrent();
-        if (current == null || current.isRemote()) {
+        if (current == null) {
+            return;
+        }
+        if (current.isRemote()) {
+            var entry = ctx.musicPlayback().info(current).orElse(new com.hmood.music.CatalogEntry(
+                    com.hmood.music.CatalogEntry.Kind.TRACK, "audius", null, current.title(), current.displayArtist(), null,
+                    null, null, null, null, null, 0, null, null, null, null, com.hmood.music.PlaybackMode.FULL, null));
+            favButton.setDisable(true);
+            ctx.toggleFavoriteArtist(entry, () -> {
+                favButton.setDisable(false);
+                if (current.equals(ctx.player().getCurrent())) updateFavButton(current);
+            });
             return;
         }
         try {
