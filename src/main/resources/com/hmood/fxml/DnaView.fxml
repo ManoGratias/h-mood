@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- ADN musical : statistiques réelles de l'historique local -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="scroll" fx:controller="com.hmood.controller.DnaController" fitToWidth="true" styleClass="page-scroll">
+    <VBox fx:id="content" styleClass="page" spacing="18">
+        <VBox spacing="2">
+            <Label styleClass="page-title" text="ADN musical"/>
+            <Label styleClass="page-subtitle" wrapText="true"
+                   text="Ton identité musicale, calculée à partir de ce que tu écoutes réellement dans H MOOD (fichiers de ta bibliothèque) et des humeurs que tu choisis."/>
+        </VBox>
+    </VBox>
+</ScrollPane>

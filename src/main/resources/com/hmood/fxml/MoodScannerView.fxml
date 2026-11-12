@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Scanner d'humeur : sélection manuelle de l'humeur + questionnaire facultatif -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.MoodScannerController"
+            fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="18">
+        <VBox spacing="4">
+            <Label styleClass="page-title" text="Scanner d'humeur"/>
+            <Label styleClass="page-subtitle" wrapText="true"
+                   text="Comment te sens-tu ? Choisis ton humeur : H MOOD compose l'ambiance qui va avec. Aucune caméra, aucun micro : c'est toi qui décides."/>
+        </VBox>
+        <TilePane fx:id="moodGrid" hgap="14" vgap="14" prefColumns="4" styleClass="mood-grid"/>
+        <VBox fx:id="questionnaireBox"/>
+        <VBox fx:id="resultBox" spacing="14"/>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Découvrir : vrais classements, nouveautés, recherche et recommandations depuis des fournisseurs autorisés -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="scroll" fx:controller="com.hmood.controller.DiscoverController"
+            fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="22">
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label styleClass="page-title" text="Découvrir"/>
+                <Label styleClass="page-subtitle"
+                       text="Les vrais classements, les nouveautés et les artistes du moment — depuis Deezer, Apple Music et Audius."/>
+            </VBox>
+            <Label styleClass="pill" text="Données réelles · sources affichées"/>
+        </HBox>
+
+        <StackPane fx:id="heroBox" minHeight="280"/>
+
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <TextField fx:id="searchField" styleClass="search-field" HBox.hgrow="ALWAYS"
+                       promptText="Chercher un titre ou un artiste dans les catalogues (ex. Aya Nakamura, Daft Punk…)" onAction="#onSearch"/>
+            <Button text="Rechercher" styleClass="primary-button" onAction="#onSearch"/>
+        </HBox>
+
+        <VBox spacing="10">
+            <Label styleClass="section-label" text="TENDANCES"/>
+            <FlowPane fx:id="chartTiles" hgap="12" vgap="12"/>
+        </VBox>
+
+        <!-- Panneau du classement / de la recherche sélectionnés -->
+        <VBox fx:id="panel" styleClass="card" spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                    <Label fx:id="panelTitle" styleClass="detail-title"/>
+                    <Label fx:id="panelSource" styleClass="source-label" wrapText="true"/>
+                    <Label fx:id="panelWarning" styleClass="pill, pill-warn" managed="false" visible="false" wrapText="true"/>
+                </VBox>
+                <Button fx:id="refreshButton" text="Actualiser" styleClass="secondary-button" onAction="#onRefresh"/>
+                <Button fx:id="deezerButton" text="En entier sur Deezer ↗" styleClass="secondary-button" onAction="#onDeezerPlayer"/>
+                <Button fx:id="playAllButton" text="Tout écouter" styleClass="primary-button" onAction="#onPlayAll"/>
+            </HBox>
+            <StackPane>
+                <VBox fx:id="listBox" spacing="2"/>
+                <FlowPane fx:id="cardBox" hgap="16" vgap="18" managed="false" visible="false"/>
+                <VBox fx:id="stateBox" alignment="CENTER" spacing="10" styleClass="empty-state"/>
+            </StackPane>
+        </VBox>
+
+        <VBox fx:id="forYouBox" spacing="12" managed="false" visible="false" styleClass="card"/>
+
+        <VBox spacing="10">
+            <Label styleClass="section-label" text="ARTISTES INDÉPENDANTS PAR HUMEUR — MORCEAUX COMPLETS (AUDIUS)"/>
+            <FlowPane fx:id="moodChips" hgap="8" vgap="8"/>
+        </VBox>
+
+        <VBox spacing="10">
+            <Label styleClass="section-label" text="SOURCES ET CONNECTEURS"/>
+            <VBox fx:id="sourcesBox" spacing="6" styleClass="card"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

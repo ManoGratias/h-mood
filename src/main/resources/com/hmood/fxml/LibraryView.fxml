@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Ma musique : bibliothèque locale -->
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hmood.controller.LibraryController"
+      styleClass="page" spacing="16">
+
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox HBox.hgrow="ALWAYS" spacing="2">
+            <Label styleClass="page-title" text="Ma musique"/>
+            <Label fx:id="summaryLabel" styleClass="page-subtitle"/>
+        </VBox>
+        <Button fx:id="importFilesButton" text="Importer des fichiers" styleClass="secondary-button" onAction="#onImportFiles"/>
+        <Button fx:id="importFolderButton" text="Importer un dossier" styleClass="primary-button" onAction="#onImportFolder"/>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <TextField fx:id="searchField" styleClass="search-field" HBox.hgrow="ALWAYS"
+                   promptText="Filtrer par titre, artiste, album, genre, humeur, année…"/>
+        <ComboBox fx:id="filterBox" prefWidth="210"/>
+    </HBox>
+
+    <HBox fx:id="progressBox" alignment="CENTER_LEFT" spacing="12" visible="false" managed="false">
+        <ProgressBar fx:id="importProgress" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        <Label fx:id="importLabel" styleClass="muted"/>
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS">
+        <TableView fx:id="table"/>
+        <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="10" visible="false">
+            <Label styleClass="empty-title" text="Ta bibliothèque est vide"/>
+            <Label styleClass="muted" text="Importe des fichiers audio ou un dossier — ou glisse-les directement ici."/>
+            <Label fx:id="formatsLabel" styleClass="muted"/>
+            <HBox alignment="CENTER" spacing="10">
+                <Button text="Importer des fichiers" styleClass="secondary-button" onAction="#onImportFiles"/>
+                <Button text="Importer un dossier" styleClass="primary-button" onAction="#onImportFolder"/>
+            </HBox>
+        </VBox>
+    </StackPane>
+</VBox>

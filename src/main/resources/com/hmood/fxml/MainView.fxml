@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Fenêtre principale : sidebar | zone centrale | panneau IA, barre de lecture en bas -->
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.MainController"
+            fx:id="appRoot" styleClass="app-root">
+
+    <!-- A. Sidebar -->
+    <left>
+        <VBox styleClass="sidebar" spacing="2">
+            <HBox fx:id="brandBox" styleClass="brand-box" alignment="CENTER_LEFT" spacing="12"/>
+            <VBox fx:id="navBox" spacing="2" VBox.vgrow="ALWAYS"/>
+            <Label styleClass="sidebar-footer" text="v0.1.0 · MVP"/>
+        </VBox>
+    </left>
+
+    <!-- B. Zone centrale -->
+    <center>
+        <VBox styleClass="main-area">
+            <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+                <StackPane fx:id="searchIcon" styleClass="search-icon"/>
+                <TextField fx:id="globalSearch" styleClass="search-field" HBox.hgrow="ALWAYS"
+                           promptText="Rechercher un titre, un artiste, un album, un genre, une humeur…"
+                           onAction="#onGlobalSearch"/>
+                <Button fx:id="themeButton" styleClass="secondary-button" onAction="#onToggleTheme"/>
+            </HBox>
+            <StackPane fx:id="contentPane" styleClass="content-pane" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+
+    <!-- C. Panneau Assistant IA -->
+    <right>
+        <VBox fx:id="aiPanel" styleClass="ai-panel" spacing="14"/>
+    </right>
+
+    <!-- D. Barre de lecture -->
+    <bottom>
+        <HBox styleClass="player-bar" alignment="CENTER" spacing="20">
+            <HBox alignment="CENTER_LEFT" spacing="12" minWidth="300" prefWidth="320" maxWidth="320">
+                <StackPane fx:id="coverPane"/>
+                <VBox alignment="CENTER_LEFT" spacing="2" HBox.hgrow="ALWAYS" minWidth="0">
+                    <Label fx:id="trackTitle" styleClass="np-title" text="Aucune lecture" minWidth="0"/>
+                    <Label fx:id="trackArtist" styleClass="np-artist" text="Importe ta musique dans Ma musique" minWidth="0"/>
+                    <Hyperlink fx:id="sourceLink" styleClass="source-link" managed="false" visible="false" minWidth="0"/>
+                </VBox>
+                <Button fx:id="favButton" styleClass="icon-button" onAction="#onToggleFavorite"/>
+            </HBox>
+
+            <VBox alignment="CENTER" spacing="4" HBox.hgrow="ALWAYS" maxWidth="680">
+                <HBox alignment="CENTER" spacing="14">
+                    <Button fx:id="shuffleButton" styleClass="icon-button" onAction="#onShuffle"/>
+                    <Button fx:id="prevButton" styleClass="icon-button" onAction="#onPrevious"/>
+                    <Button fx:id="playButton" styleClass="play-button" onAction="#onPlayPause"/>
+                    <Button fx:id="nextButton" styleClass="icon-button" onAction="#onNext"/>
+                    <Button fx:id="repeatButton" styleClass="icon-button" onAction="#onRepeat"/>
+                </HBox>
+                <HBox alignment="CENTER" spacing="10">
+                    <Label fx:id="elapsedLabel" styleClass="time-label" text="0:00" minWidth="44" alignment="CENTER_RIGHT"/>
+                    <Slider fx:id="progressSlider" styleClass="progress-slider" max="1" HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="totalLabel" styleClass="time-label" text="0:00" minWidth="44"/>
+                </HBox>
+            </VBox>
+
+            <HBox alignment="CENTER_RIGHT" spacing="10" minWidth="300" prefWidth="320" maxWidth="320">
+                <Canvas fx:id="visualizerCanvas" width="92" height="28"/>
+                <Button fx:id="queueButton" styleClass="icon-button" onAction="#onShowQueue"/>
+                <StackPane fx:id="volumeIcon" styleClass="volume-icon"/>
+                <Slider fx:id="volumeSlider" styleClass="volume-slider" max="1" prefWidth="110"/>
+                <padding><Insets right="4"/></padding>
+            </HBox>
+        </HBox>
+    </bottom>
+</BorderPane>

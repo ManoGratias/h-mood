@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- DJ IA : univers cohérents, titres phares, enchaînement au tempo -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:id="scroll"
+            fx:controller="com.hmood.controller.DjController" fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="20">
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label styleClass="page-title" text="DJ IA"/>
+                <Label styleClass="page-subtitle" wrapText="true"
+                       text="Choisis un univers : le DJ prend les titres phares du moment, analyse leur tempo et les enchaîne comme en soirée."/>
+            </VBox>
+            <Label fx:id="statusPill" styleClass="pill, pill-warn"/>
+        </HBox>
+
+        <VBox styleClass="dj-console" spacing="14">
+            <Label styleClass="dj-console-title" text="Qu'est-ce que je te passe ?"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="commandField" styleClass="search-field" HBox.hgrow="ALWAYS"
+                           promptText="Ex. « rap ivoirien », « du togo », « afrobeats », « rap US », « un son pour un jour de pluie »" onAction="#onMix"/>
+                <Button text="Mixer" styleClass="primary-button" onAction="#onMix"/>
+            </HBox>
+        </VBox>
+
+        <VBox fx:id="stylesBox" spacing="16"/>
+
+        <VBox styleClass="card" spacing="10">
+            <Label styleClass="card-title" text="Transitions"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Fondu enchaîné entre les morceaux"/>
+                <Slider fx:id="crossfadeSlider" min="0" max="12" majorTickUnit="2" prefWidth="260"/>
+                <Label fx:id="crossfadeLabel" styleClass="muted"/>
+            </HBox>
+        </VBox>
+
+        <VBox fx:id="sessionBox" spacing="14"/>
+    </VBox>
+</ScrollPane>

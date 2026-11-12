@@ -1,0 +1,832 @@
+/* =====================================================================
+   H MOOD — styles de base.
+   Les couleurs (-hm-*) sont définies par theme-ice.css / theme-sunset.css.
+   ===================================================================== */
+
+.root {
+    -fx-font-family: "Segoe UI Variable Text", "Segoe UI", "Inter", sans-serif;
+    -fx-font-size: 13px;
+}
+
+.label { -fx-text-fill: -hm-text; }
+.muted { -fx-text-fill: -hm-text-muted; }
+
+.app-root { -fx-background-color: -hm-app-bg; }
+
+/* ------------------------------------------------------------- sidebar */
+
+.sidebar {
+    -fx-background-color: -hm-bg-2;
+    -fx-padding: 20 12 14 12;
+    -fx-pref-width: 250;
+    -fx-min-width: 250;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 0 1 0 0;
+}
+.brand-box { -fx-padding: 0 8 14 8; }
+.brand-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.brand-slogan { -fx-font-size: 10px; -fx-wrap-text: true; -fx-text-fill: -hm-text-muted; }
+.logo-bar { -fx-fill: -hm-logo; }
+
+.nav-section {
+    -fx-text-fill: -hm-text-muted;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 14 12 4 12;
+    -fx-opacity: 0.7;
+}
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-text-fill: -hm-text-muted;
+    -fx-alignment: center-left;
+    -fx-padding: 8 12;
+    -fx-background-radius: 10;
+    -fx-graphic-text-gap: 12;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+.nav-button .nav-text { -fx-text-fill: -hm-text-muted; -fx-font-size: 13px; }
+.nav-button:hover { -fx-background-color: -hm-surface-hover; -fx-text-fill: -hm-text; }
+.nav-button:hover .nav-text { -fx-text-fill: -hm-text; }
+.nav-button:selected { -fx-background-color: -hm-accent-soft; -fx-text-fill: -hm-text; -fx-font-weight: bold; }
+.nav-button:selected .nav-text { -fx-text-fill: -hm-text; -fx-font-weight: bold; }
+.nav-button .icon { -fx-fill: -hm-text-muted; }
+.nav-button:hover .icon { -fx-fill: -hm-text; }
+.nav-button:selected .icon { -fx-fill: -hm-accent; }
+.nav-button:focused { -fx-background-insets: 0; }
+.nav-soon {
+    -fx-font-size: 9px;
+    -fx-text-fill: -hm-text-muted;
+    -fx-background-color: -hm-surface;
+    -fx-background-radius: 8;
+    -fx-padding: 1 6;
+}
+.sidebar-footer { -fx-text-fill: -hm-text-muted; -fx-font-size: 10px; -fx-padding: 10 12 0 12; -fx-opacity: 0.6; }
+
+/* ------------------------------------------------------------- zone centrale */
+
+.main-area { -fx-background-color: transparent; }
+.top-bar { -fx-padding: 16 30 4 30; }
+.search-icon .icon { -fx-fill: -hm-text-muted; }
+.content-pane { -fx-background-color: transparent; }
+
+.page { -fx-padding: 18 30 26 30; }
+.page-title { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.page-subtitle { -fx-text-fill: -hm-text-muted; -fx-font-size: 13px; }
+.detail-title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.section-label { -fx-text-fill: -hm-accent-2; -fx-font-size: 11px; -fx-font-weight: bold; }
+
+.page-scroll, .chat-scroll, .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+.scroll-pane > .viewport { -fx-background-color: transparent; }
+.scroll-pane > .corner { -fx-background-color: transparent; }
+.scroll-bar { -fx-background-color: transparent; -fx-padding: 2; }
+.scroll-bar .thumb { -fx-background-color: -hm-border-strong; -fx-background-radius: 6; }
+.scroll-bar .thumb:hover { -fx-background-color: -hm-text-muted; }
+.scroll-bar .track, .scroll-bar .track-background { -fx-background-color: transparent; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 0; -fx-background-color: transparent; }
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-padding: 0; -fx-shape: " "; }
+.scroll-bar:vertical { -fx-pref-width: 10; }
+.scroll-bar:horizontal { -fx-pref-height: 10; }
+
+/* ------------------------------------------------------------- cartes */
+
+.card {
+    -fx-background-color: -hm-surface;
+    -fx-background-radius: 18;
+    -fx-border-color: -hm-border;
+    -fx-border-radius: 18;
+    -fx-padding: 18 20;
+}
+.card-title { -fx-text-fill: -hm-text; -fx-font-size: 15px; -fx-font-weight: bold; }
+.card-subtitle { -fx-text-fill: -hm-text-muted; -fx-font-size: 12px; }
+.card-text { -fx-text-fill: -hm-text; -fx-font-size: 13px; }
+
+.hero-card { -fx-background-color: -hm-hero, -hm-surface; -fx-padding: 26 30; }
+.hero-title { -fx-font-size: 30px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.hero-slogan { -fx-font-size: 14px; -fx-text-fill: -hm-accent-2; -fx-font-weight: bold; }
+
+.mood-today-card {
+    -fx-background-radius: 22;
+    -fx-padding: 24 26;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.30), 24, 0, 0, 8);
+}
+.mood-today-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.mood-today-name { -fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: white; }
+.on-mood-label { -fx-text-fill: rgba(255,255,255,0.85); -fx-font-size: 11px; -fx-font-weight: bold; }
+.on-mood-text { -fx-text-fill: rgba(255,255,255,0.92); -fx-font-size: 13px; }
+.on-mood-list {
+    -fx-background-color: rgba(8,12,20,0.30);
+    -fx-background-radius: 14;
+    -fx-padding: 8;
+}
+.on-mood-list .track-title { -fx-text-fill: white; }
+.on-mood-list .track-artist, .on-mood-list .track-duration { -fx-text-fill: rgba(255,255,255,0.75); }
+.on-mood-list .track-row:hover { -fx-background-color: rgba(255,255,255,0.12); }
+.on-mood-button {
+    -fx-background-color: white;
+    -fx-text-fill: #101F32;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+}
+.on-mood-button .icon { -fx-fill: #101F32; }
+.on-mood-ghost {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+}
+.on-mood-button:hover, .on-mood-ghost:hover { -fx-opacity: 0.88; }
+
+.stat-value { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.stat-label { -fx-font-size: 11px; -fx-text-fill: -hm-text-muted; }
+
+.empty-state { -fx-padding: 40; }
+.empty-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+
+.pill {
+    -fx-background-color: -hm-accent-soft;
+    -fx-text-fill: -hm-accent-2;
+    -fx-background-radius: 12;
+    -fx-padding: 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.pill-warn { -fx-background-color: rgba(255,196,110,0.16); -fx-text-fill: #FFC777; }
+
+/* ------------------------------------------------------------- lignes de morceaux */
+
+.track-row { -fx-padding: 6 8; -fx-background-radius: 10; -fx-cursor: hand; }
+.track-row:hover { -fx-background-color: -hm-surface-hover; }
+.track-title { -fx-text-fill: -hm-text; -fx-font-weight: bold; -fx-font-size: 13px; }
+.track-artist { -fx-text-fill: -hm-text-muted; -fx-font-size: 11.5px; }
+.track-duration { -fx-text-fill: -hm-text-muted; -fx-font-size: 11.5px; }
+
+.cover { -fx-background-color: -hm-cover; -fx-background-radius: 10; }
+.cover .icon { -fx-fill: rgba(255,255,255,0.75); }
+
+/* ------------------------------------------------------------- boutons */
+
+.button, .toggle-button { -fx-cursor: hand; }
+
+.primary-button {
+    -fx-background-color: -hm-gradient;
+    -fx-background-insets: 0;
+    -fx-text-fill: -hm-on-accent;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 9 18;
+}
+.primary-button .icon { -fx-fill: -hm-on-accent; }
+.primary-button:hover { -fx-opacity: 0.9; }
+.primary-button:pressed { -fx-opacity: 0.8; }
+.primary-button:disabled { -fx-opacity: 0.4; }
+
+.secondary-button, .danger-button {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: -hm-text;
+    -fx-padding: 8 16;
+}
+.secondary-button .icon { -fx-fill: -hm-text; }
+.secondary-button:hover { -fx-background-color: -hm-surface-hover; }
+.danger-button { -fx-text-fill: #FF8A80; -fx-border-color: rgba(255,138,128,0.4); }
+.danger-button:hover { -fx-background-color: rgba(255,138,128,0.12); }
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 7;
+    -fx-background-radius: 20;
+}
+.icon-button:hover { -fx-background-color: -hm-surface-hover; }
+.icon-button .icon { -fx-fill: -hm-text-muted; }
+.icon-button:hover .icon { -fx-fill: -hm-text; }
+.icon-button.active .icon { -fx-fill: -hm-accent; }
+.icon-button:disabled { -fx-opacity: 0.35; }
+
+.play-button {
+    -fx-background-color: -hm-gradient-diag;
+    -fx-background-insets: 0;
+    -fx-background-radius: 30;
+    -fx-min-width: 48; -fx-min-height: 48;
+    -fx-pref-width: 48; -fx-pref-height: 48;
+    -fx-max-width: 48; -fx-max-height: 48;
+    -fx-padding: 0;
+}
+.play-button .icon { -fx-fill: -hm-on-accent; }
+.play-button:hover { -fx-scale-x: 1.06; -fx-scale-y: 1.06; }
+
+.chip-button {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-border-color: -hm-border;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-text-fill: -hm-text-muted;
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+}
+.chip-button:hover { -fx-text-fill: -hm-text; -fx-border-color: -hm-accent; }
+
+.chip {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-text-fill: -hm-text;
+    -fx-padding: 6 14;
+}
+.chip:hover { -fx-background-color: -hm-surface-hover; }
+.chip:selected { -fx-background-color: -hm-accent-soft; -fx-border-color: -hm-accent; -fx-font-weight: bold; }
+
+.send-button {
+    -fx-background-color: -hm-gradient;
+    -fx-background-insets: 0;
+    -fx-background-radius: 20;
+    -fx-min-width: 36; -fx-min-height: 36;
+    -fx-max-width: 36; -fx-max-height: 36;
+    -fx-padding: 0;
+}
+.send-button .icon { -fx-fill: -hm-on-accent; }
+
+.theme-choice {
+    -fx-background-insets: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-width: 2;
+    -fx-border-color: transparent;
+    -fx-pref-width: 200;
+    -fx-pref-height: 78;
+    -fx-alignment: bottom-left;
+    -fx-padding: 12 14;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+.theme-ice { -fx-background-color: linear-gradient(to bottom right, #0A1422, #101F32 40%, #45BFEF 85%, #BDEFFF); -fx-text-fill: #DDF8FF; }
+.theme-sunset { -fx-background-color: linear-gradient(to bottom right, #1E140F, #302019 40%, #FFA66F 85%, #FFE0C2); -fx-text-fill: #FFF3E8; }
+.theme-choice:selected { -fx-border-color: -hm-text; }
+.theme-choice:hover { -fx-opacity: 0.92; }
+
+/* ------------------------------------------------------------- champs */
+
+.text-field, .combo-box, .spinner {
+    -fx-background-color: -hm-input;
+    -fx-background-insets: 0;
+    -fx-background-radius: 10;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 10;
+    -fx-text-fill: -hm-text;
+    -fx-prompt-text-fill: -hm-text-muted;
+    -fx-highlight-fill: -hm-accent-soft-strong;
+    -fx-highlight-text-fill: -hm-text;
+}
+.text-field { -fx-padding: 8 12; }
+.text-field:focused, .combo-box:focused, .spinner:focused { -fx-border-color: -hm-accent; }
+.search-field { -fx-background-radius: 22; -fx-border-radius: 22; -fx-padding: 10 18; -fx-font-size: 13.5px; }
+.chat-input { -fx-background-radius: 18; -fx-border-radius: 18; }
+
+.combo-box .list-cell { -fx-text-fill: -hm-text; -fx-background-color: transparent; -fx-padding: 6 10; }
+.combo-box .arrow-button { -fx-background-color: transparent; }
+.combo-box .arrow { -fx-background-color: -hm-text-muted; }
+.combo-box-popup .list-view {
+    -fx-background-color: -hm-bg-2;
+    -fx-background-radius: 10;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 10;
+}
+.combo-box-popup .list-cell { -fx-background-color: transparent; -fx-text-fill: -hm-text; -fx-padding: 7 12; }
+.combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:selected { -fx-background-color: -hm-accent-soft; }
+
+.spinner .text-field { -fx-background-color: transparent; -fx-border-color: transparent; }
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button { -fx-background-color: transparent; }
+.spinner .increment-arrow, .spinner .decrement-arrow { -fx-background-color: -hm-text-muted; }
+
+/* ------------------------------------------------------------- sliders & progression */
+
+.slider .track {
+    -fx-background-color: -hm-track;
+    -fx-background-radius: 3;
+    -fx-background-insets: 0;
+    -fx-pref-height: 5;
+    -fx-padding: 0;
+}
+.slider .thumb {
+    -fx-background-color: -hm-accent-3;
+    -fx-background-insets: 0;
+    -fx-background-radius: 7;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 6, 0, 0, 1);
+}
+.slider .thumb:hover { -fx-scale-x: 1.2; -fx-scale-y: 1.2; }
+.slider:focused .thumb { -fx-background-insets: 0; }
+
+.progress-bar > .track { -fx-background-color: -hm-track; -fx-background-radius: 4; -fx-background-insets: 0; }
+.progress-bar > .bar { -fx-background-color: -hm-gradient; -fx-background-radius: 4; -fx-background-insets: 0; -fx-padding: 3; }
+
+/* ------------------------------------------------------------- tableaux & listes */
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: transparent;
+}
+.table-view:focused { -fx-background-color: transparent; -fx-background-insets: 0; }
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 0 0 1 0;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-size: 34;
+}
+.table-view .column-header .label {
+    -fx-text-fill: -hm-text-muted;
+    -fx-font-size: 10.5px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left;
+    -fx-padding: 0 0 0 6;
+}
+.table-view .column-header .arrow { -fx-background-color: -hm-text-muted; }
+.table-view .column-resize-line { -fx-background-color: -hm-accent; }
+.table-view .placeholder .label { -fx-text-fill: -hm-text-muted; }
+
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-cell-size: 44;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+.table-row-cell:odd { -fx-background-color: -hm-row-alt; }
+.table-row-cell:hover { -fx-background-color: -hm-surface-hover; }
+.table-row-cell:selected { -fx-background-color: -hm-accent-soft-strong; }
+.table-row-cell .table-cell {
+    -fx-text-fill: -hm-text;
+    -fx-border-color: transparent;
+    -fx-alignment: center-left;
+    -fx-padding: 0 6;
+}
+.table-row-cell:playing .table-cell, .table-row-cell:playing .cell-title { -fx-text-fill: -hm-accent-2; -fx-font-weight: bold; }
+.cell-title { -fx-text-fill: -hm-text; -fx-font-weight: bold; }
+.fav-cell .icon { -fx-fill: -hm-text-muted; -fx-opacity: 0.5; }
+.fav-cell:hover .icon { -fx-opacity: 1; }
+.fav-cell-on .icon { -fx-fill: -hm-accent; }
+.mood-pill {
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 2 9;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+.list-view:focused { -fx-background-insets: 0; }
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -hm-text;
+    -fx-padding: 10 12;
+    -fx-background-radius: 12;
+}
+.list-cell:filled:hover { -fx-background-color: -hm-surface-hover; }
+.list-cell:filled:selected { -fx-background-color: -hm-accent-soft-strong; }
+
+/* ------------------------------------------------------------- Mood Scanner */
+
+.mood-card {
+    -fx-background-insets: 0;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 3;
+    -fx-border-color: transparent;
+    -fx-padding: 14 16;
+    -fx-alignment: bottom-left;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 14, 0, 0, 4);
+}
+.mood-card:hover { -fx-scale-x: 1.03; -fx-scale-y: 1.03; }
+.mood-card.selected { -fx-border-color: white; -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.35), 20, 0.2, 0, 0); }
+.mood-name { -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 4, 0, 0, 1); }
+.mood-tagline { -fx-text-fill: rgba(255,255,255,0.92); -fx-font-size: 11px; }
+
+.mood-result {
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-padding: 22 24;
+}
+.result-title { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.question-label { -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+
+.titled-pane > .title {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-background-radius: 14;
+    -fx-border-color: -hm-border;
+    -fx-border-radius: 14;
+    -fx-padding: 12 16;
+}
+.titled-pane:expanded > .title { -fx-background-radius: 14 14 0 0; -fx-border-radius: 14 14 0 0; }
+.titled-pane > .title > .text { -fx-fill: -hm-text; -fx-font-weight: bold; }
+.titled-pane > .title > .arrow-button > .arrow { -fx-background-color: -hm-text-muted; }
+.titled-pane > .content {
+    -fx-background-color: -hm-surface;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 0 1 1 1;
+    -fx-background-radius: 0 0 14 14;
+    -fx-border-radius: 0 0 14 14;
+    -fx-padding: 16;
+}
+
+/* ------------------------------------------------------------- panneau IA */
+
+.ai-panel {
+    -fx-background-color: -hm-bg-2;
+    -fx-pref-width: 310;
+    -fx-min-width: 310;
+    -fx-max-width: 310;
+    -fx-padding: 20 16 16 16;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 0 0 0 1;
+}
+.panel-header .icon { -fx-fill: -hm-accent; }
+.panel-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.panel-mood { -fx-text-fill: -hm-text; -fx-font-size: 12.5px; }
+.bubble-user {
+    -fx-background-color: -hm-accent-soft-strong;
+    -fx-background-radius: 14 14 4 14;
+    -fx-padding: 8 12;
+    -fx-text-fill: -hm-text;
+    -fx-max-width: 230;
+}
+.bubble-ai {
+    -fx-background-color: -hm-surface;
+    -fx-background-radius: 14 14 14 4;
+    -fx-border-color: -hm-border;
+    -fx-border-radius: 14 14 14 4;
+    -fx-padding: 10 12;
+}
+.bubble-text { -fx-text-fill: -hm-text; -fx-font-size: 12.5px; }
+.separator .line { -fx-border-color: -hm-border; -fx-border-width: 1 0 0 0; }
+
+/* ------------------------------------------------------------- barre de lecture */
+
+.player-bar {
+    -fx-background-color: -hm-player;
+    -fx-padding: 12 24;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 1 0 0 0;
+    -fx-min-height: 92;
+}
+.np-title { -fx-text-fill: -hm-text; -fx-font-size: 14px; -fx-font-weight: bold; }
+.np-artist { -fx-text-fill: -hm-text-muted; -fx-font-size: 12px; }
+.time-label { -fx-text-fill: -hm-text-muted; -fx-font-size: 11px; }
+.volume-icon .icon { -fx-fill: -hm-text-muted; }
+
+.placeholder-icon {
+    -fx-background-color: -hm-accent-soft;
+    -fx-background-radius: 16;
+    -fx-min-width: 60; -fx-min-height: 60;
+    -fx-max-width: 60; -fx-max-height: 60;
+}
+.placeholder-icon .icon { -fx-fill: -hm-accent; }
+
+/* ------------------------------------------------------------- menus, dialogues, notifications */
+
+.context-menu {
+    -fx-background-color: -hm-bg-2;
+    -fx-background-insets: 0;
+    -fx-background-radius: 12;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 12;
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 20, 0, 0, 6);
+}
+.menu-item { -fx-background-radius: 8; -fx-padding: 7 14; }
+.menu-item .label { -fx-text-fill: -hm-text; }
+.menu-item:focused { -fx-background-color: -hm-accent-soft-strong; }
+.menu-item:disabled .label { -fx-text-fill: -hm-text-muted; }
+.menu-item.current-item .label { -fx-text-fill: -hm-accent-2; -fx-font-weight: bold; }
+.menu-item.danger-item .label { -fx-text-fill: #FF8A80; }
+.menu .right-container .arrow { -fx-background-color: -hm-text-muted; }
+
+.tooltip {
+    -fx-background-color: -hm-bg-2;
+    -fx-text-fill: -hm-text;
+    -fx-background-radius: 8;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 8;
+    -fx-font-size: 11.5px;
+}
+
+.dialog-pane { -fx-background-color: -hm-bg-2; -fx-padding: 4; }
+.dialog-pane > .header-panel {
+    -fx-background-color: -hm-bg;
+    -fx-padding: 14 18;
+    -fx-border-color: -hm-border;
+    -fx-border-width: 0 0 1 0;
+}
+.dialog-pane > .header-panel .label { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.dialog-pane > .content { -fx-padding: 18; }
+.dialog-pane .label { -fx-text-fill: -hm-text; }
+.dialog-pane > .button-bar > .container { -fx-padding: 4 14 14 14; }
+.dialog-pane > .button-bar .button {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 18;
+    -fx-background-radius: 18;
+    -fx-text-fill: -hm-text;
+    -fx-padding: 7 16;
+}
+.dialog-pane > .button-bar .button:default {
+    -fx-background-color: -hm-gradient;
+    -fx-border-color: transparent;
+    -fx-text-fill: -hm-on-accent;
+    -fx-font-weight: bold;
+}
+.dialog-pane .graphic-container { -fx-padding: 0; }
+.alert .dialog-pane .graphic-container .image-view { -fx-opacity: 0; }
+
+.toast {
+    -fx-background-color: -hm-bg-2;
+    -fx-text-fill: -hm-text;
+    -fx-background-radius: 14;
+    -fx-border-color: -hm-accent;
+    -fx-border-radius: 14;
+    -fx-padding: 11 18;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 18, 0, 0, 6);
+}
+
+/* ------------------------------------------------------------- Découvrir (catalogue en ligne) */
+
+.hero-banner {
+    -fx-background-color: -hm-bg-2;
+    -fx-background-radius: 22;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 30, 0, 0, 10);
+}
+.hero-shade { -fx-background-color: linear-gradient(to right, rgba(6,10,18,0.90) 30%, rgba(6,10,18,0.35)); }
+.hero-cover { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0.1, 0, 10); }
+.hero-kicker { -fx-text-fill: -hm-accent-2; -fx-font-size: 12px; -fx-font-weight: bold; }
+.hero-track-title { -fx-text-fill: white; -fx-font-size: 38px; -fx-font-weight: bold; }
+.hero-track-artist { -fx-text-fill: rgba(255,255,255,0.85); -fx-font-size: 17px; }
+.hero-chip {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 2 9;
+    -fx-font-size: 11px;
+}
+.glass-button {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-background-insets: 0;
+    -fx-border-color: rgba(255,255,255,0.28);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+}
+.glass-button:hover { -fx-background-color: rgba(255,255,255,0.22); }
+
+.mood-chip {
+    -fx-background-insets: 0;
+    -fx-background-radius: 16;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 7 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 2);
+}
+.mood-chip:hover { -fx-scale-x: 1.06; -fx-scale-y: 1.06; }
+
+.track-card {
+    -fx-background-color: -hm-surface;
+    -fx-background-radius: 16;
+    -fx-border-color: -hm-border;
+    -fx-border-radius: 16;
+    -fx-padding: 12;
+    -fx-cursor: hand;
+}
+.track-card:hover { -fx-background-color: -hm-surface-hover; -fx-border-color: -hm-accent-soft-strong; }
+.card-track-title { -fx-text-fill: -hm-text; -fx-font-weight: bold; -fx-font-size: 13px; }
+.card-track-artist { -fx-text-fill: -hm-text-muted; -fx-font-size: 12px; }
+.card-genre { -fx-text-fill: -hm-text-muted; -fx-font-size: 11px; }
+.card-play {
+    -fx-background-color: -hm-gradient-diag;
+    -fx-background-radius: 30;
+    -fx-min-width: 50; -fx-min-height: 50;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 3);
+}
+.card-play .icon { -fx-fill: -hm-on-accent; }
+.progress-indicator { -fx-progress-color: -hm-accent; }
+
+/* ------------------------------------------------------------- classements réels */
+
+.chart-tile {
+    -fx-background-insets: 0;
+    -fx-background-radius: 16;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 170;
+    -fx-pref-height: 74;
+    -fx-alignment: bottom-left;
+    -fx-padding: 10 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 12, 0, 0, 4);
+}
+.chart-tile:hover { -fx-scale-x: 1.05; -fx-scale-y: 1.05; }
+.rank-label { -fx-text-fill: -hm-accent-2; -fx-font-size: 18px; -fx-font-weight: bold; -fx-alignment: center-right; }
+.chart-row { -fx-padding: 6 10; }
+.source-label { -fx-text-fill: -hm-text-muted; -fx-font-size: 11.5px; }
+.playback-badge { -fx-background-radius: 10; -fx-padding: 2 8; -fx-font-size: 10.5px; -fx-font-weight: bold; }
+.playback-preview { -fx-background-color: rgba(255,196,110,0.16); -fx-text-fill: #FFC777; }
+.playback-full { -fx-background-color: rgba(127,216,190,0.18); -fx-text-fill: #7FD8BE; }
+.playback-link_only { -fx-background-color: -hm-surface-hover; -fx-text-fill: -hm-text-muted; }
+.external-link, .source-link { -fx-text-fill: -hm-accent-2; -fx-border-color: transparent; -fx-padding: 0; -fx-font-size: 11.5px; }
+.external-link:visited, .source-link:visited { -fx-text-fill: -hm-accent-2; }
+
+/* ------------------------------------------------------------- DJ IA */
+.dj-console {
+    -fx-background-color: linear-gradient(to right, -hm-accent-soft-strong, -hm-surface);
+    -fx-background-radius: 22;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 22;
+    -fx-padding: 22 24;
+}
+.dj-console-title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.dj-session {
+    -fx-background-color: -hm-surface;
+    -fx-background-radius: 22;
+    -fx-border-color: -hm-accent-soft-strong;
+    -fx-border-radius: 22;
+    -fx-padding: 20 22;
+}
+.dj-intro { -fx-text-fill: -hm-text; -fx-font-size: 14px; }
+.ghost-button { -fx-background-color: transparent; -fx-text-fill: -hm-text-muted; -fx-padding: 8 12; }
+.ghost-button:hover { -fx-text-fill: -hm-text; }
+.deezer-header { -fx-background-color: -hm-bg-2; -fx-border-color: -hm-border; -fx-border-width: 0 0 1 0; }
+
+/* ------------------------------------------------------------- ADN musical */
+.dna-hero { -fx-background-color: -hm-hero, -hm-surface; -fx-padding: 20 26; }
+.dna-profile { -fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.chart { -fx-padding: 4; }
+.chart-plot-background { -fx-background-color: transparent; }
+.chart-vertical-grid-lines, .chart-horizontal-grid-lines { -fx-stroke: -hm-border; }
+.chart-alternative-row-fill { -fx-fill: transparent; }
+.axis { -fx-tick-label-fill: -hm-text-muted; -fx-border-color: transparent; }
+.axis-tick-mark, .axis-minor-tick-mark { -fx-stroke: -hm-border; }
+.chart-pie-label { -fx-fill: -hm-text; -fx-font-size: 11px; }
+.chart-pie-label-line { -fx-stroke: -hm-text-muted; }
+.chart-pie { -fx-border-color: -hm-bg; -fx-border-width: 2; }
+.default-color0.chart-bar { -fx-bar-fill: -hm-gradient; -fx-background-radius: 0 6 6 0; }
+.default-color0.chart-series-line { -fx-stroke: -hm-accent; -fx-stroke-width: 3; }
+.default-color0.chart-pie { -fx-pie-color: #45BFEF; }
+.default-color1.chart-pie { -fx-pie-color: #FFA66F; }
+.default-color2.chart-pie { -fx-pie-color: #8E54E9; }
+.default-color3.chart-pie { -fx-pie-color: #7FD8BE; }
+.default-color4.chart-pie { -fx-pie-color: #FF8FB1; }
+.default-color5.chart-pie { -fx-pie-color: #FFD36E; }
+.default-color6.chart-pie { -fx-pie-color: #5B7BB4; }
+.default-color7.chart-pie { -fx-pie-color: #E5533C; }
+
+/* ------------------------------------------------------------- Voyage temporel */
+.era-tile {
+    -fx-background-insets: 0;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-width: 3;
+    -fx-border-color: transparent;
+    -fx-pref-height: 110;
+    -fx-alignment: bottom-left;
+    -fx-padding: 14 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 14, 0, 0, 4);
+}
+.era-tile:selected { -fx-border-color: white; }
+.era-tile:hover { -fx-scale-x: 1.03; -fx-scale-y: 1.03; }
+.era-title { -fx-text-fill: white; -fx-font-size: 17px; -fx-font-weight: bold; -fx-wrap-text: true; }
+.era-tagline { -fx-text-fill: rgba(255,255,255,0.88); -fx-font-size: 11px; }
+.era-card { -fx-background-radius: 22; -fx-padding: 20 22; -fx-border-color: -hm-border; -fx-border-radius: 22; }
+
+/* ------------------------------------------------------------- Concentration / Sommeil */
+.focus-hero { -fx-padding: 26 30; }
+.focus-track { -fx-fill: transparent; -fx-stroke: -hm-track; -fx-stroke-width: 12; }
+.focus-arc { -fx-fill: transparent; -fx-stroke: -hm-accent; -fx-stroke-width: 12; }
+.focus-arc-break { -fx-stroke: #7FD8BE; }
+.focus-time { -fx-font-size: 46px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.focus-phase { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.ambience-tile {
+    -fx-background-insets: 0;
+    -fx-background-radius: 16;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-pref-width: 180;
+    -fx-pref-height: 64;
+    -fx-alignment: bottom-left;
+    -fx-padding: 10 14;
+}
+.ambience-tile:hover { -fx-scale-x: 1.04; -fx-scale-y: 1.04; }
+.night-hero {
+    -fx-background-color: linear-gradient(to bottom, #050A14, #101F32 70%, #1D2B53);
+    -fx-background-radius: 24;
+    -fx-padding: 30;
+}
+.night-title { -fx-text-fill: #DDF8FF; -fx-font-size: 30px; -fx-font-weight: bold; }
+.night-countdown { -fx-text-fill: #FFF3E8; -fx-font-size: 64px; -fx-font-weight: bold; }
+.night-hint { -fx-text-fill: rgba(221,248,255,0.7); }
+.night-check, .night-check .label { -fx-text-fill: #DDF8FF; }
+.night-chip { -fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: #DDF8FF; -fx-border-color: rgba(255,255,255,0.2); }
+.night-chip:selected { -fx-background-color: rgba(131,223,255,0.25); -fx-border-color: #83DFFF; }
+.check-box .box { -fx-background-color: -hm-input; -fx-border-color: -hm-border-strong; -fx-border-radius: 4; -fx-background-radius: 4; }
+.check-box:selected .mark { -fx-background-color: -hm-accent; }
+.sleep-badge { -fx-text-fill: #C3A6FF; -fx-font-weight: bold; -fx-font-size: 12px; }
+
+.artist-pill {
+    -fx-background-color: -hm-surface-hover;
+    -fx-background-insets: 0;
+    -fx-background-radius: 16;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 16;
+    -fx-text-fill: -hm-text;
+    -fx-font-weight: bold;
+    -fx-padding: 5 12;
+}
+.artist-pill:hover { -fx-border-color: -hm-accent; -fx-text-fill: -hm-accent-2; }
+
+.assistant-toggle {
+    -fx-background-color: -hm-surface;
+    -fx-background-insets: 0;
+    -fx-border-color: -hm-border-strong;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: -hm-text-muted;
+    -fx-padding: 8 16;
+}
+.assistant-toggle .icon { -fx-fill: -hm-text-muted; }
+.assistant-toggle:selected { -fx-background-color: -hm-accent-soft-strong; -fx-text-fill: -hm-text; -fx-border-color: -hm-accent; }
+.assistant-toggle:selected .icon { -fx-fill: -hm-accent; }
+
+.bpm-badge {
+    -fx-background-color: -hm-accent-soft;
+    -fx-text-fill: -hm-accent-2;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.tempo-curve { -fx-padding: 6 0; }
+
+/* ------------------------------------------------------------- Accueil */
+.home-greeting { -fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.home-date { -fx-text-fill: -hm-text-muted; -fx-font-size: 14px; }
+.home-greeting-on { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 1); }
+.home-date-on { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.8); }
+.home-section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -hm-text; }
+.carousel { -fx-background-color: transparent; -fx-background: transparent; }
+.carousel .scroll-bar:horizontal { -fx-pref-height: 8; -fx-opacity: 0.6; }
+.carousel .scroll-bar:horizontal:hover { -fx-opacity: 1; }
+.mood-chip-current { -fx-border-color: white; -fx-border-width: 2; -fx-border-radius: 16; }
+.dj-tile { -fx-pref-width: 190; -fx-pref-height: 92; }
+.tile-kicker { -fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 10px; -fx-font-weight: bold; }
+.tile-title { -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; }
+.artist-card { -fx-cursor: hand; -fx-padding: 4; }
+.artist-card:hover .artist-avatar { -fx-scale-x: 1.06; -fx-scale-y: 1.06; }
+.artist-avatar { -fx-background-color: -hm-surface; -fx-background-radius: 60; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 14, 0, 0, 4); }
+.artist-name { -fx-text-fill: -hm-text; -fx-font-weight: bold; -fx-font-size: 12.5px; -fx-alignment: center; }
+
+.artist-pill-own { -fx-background-color: -hm-accent-soft-strong; -fx-border-color: -hm-accent; }
+.artist-pill-ref { -fx-opacity: 0.9; }
+
+/* ------------------------------------------------------------- paroles */
+.lyrics-overlay { -fx-background-color: -hm-app-bg; }
+.lyrics-shade { -fx-background-color: linear-gradient(to right, rgba(5,10,20,0.78), rgba(5,10,20,0.45) 45%, rgba(5,10,20,0.70)); }
+.lyrics-title { -fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: white; }
+.lyrics-artist { -fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.75); }
+.lyrics-note { -fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.55); }
+.lyrics-cover { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 40, 0.2, 0, 14); }
+.lyric-line { -fx-font-size: 28px; -fx-font-weight: bold; -fx-cursor: hand; -fx-line-spacing: 2; }
+.lyric-future { -fx-text-fill: rgba(255,255,255,0.38); }
+.lyric-past { -fx-text-fill: rgba(255,255,255,0.22); }
+.lyric-current { -fx-text-fill: white; -fx-font-size: 32px; }
+.lyric-line:hover { -fx-text-fill: rgba(255,255,255,0.85); }
+.lyric-plain { -fx-font-size: 19px; -fx-text-fill: rgba(255,255,255,0.88); -fx-line-spacing: 6; }
+.lyric-message { -fx-font-size: 20px; -fx-text-fill: rgba(255,255,255,0.7); }
+
+.shortcut-list { -fx-text-fill: -hm-text; -fx-font-size: 12.5px; -fx-line-spacing: 5; -fx-opacity: 0.85; }

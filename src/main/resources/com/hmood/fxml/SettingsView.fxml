@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Settings -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.SettingsController"
+            fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="16" maxWidth="900">
+        <Label styleClass="page-title" text="Paramètres"/>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Apparence"/>
+            <Label styleClass="card-subtitle" text="Choisis l'ambiance visuelle de H MOOD."/>
+            <HBox spacing="12">
+                <ToggleButton fx:id="iceButton" styleClass="theme-choice, theme-ice" text="Bleu Glacier"/>
+                <ToggleButton fx:id="sunsetButton" styleClass="theme-choice, theme-sunset" text="Orange Couchant"/>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Profil"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Nom affiché"/>
+                <TextField fx:id="nameField" prefWidth="260"/>
+                <Button text="Enregistrer" styleClass="primary-button" onAction="#onSaveName"/>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Bibliothèque"/>
+            <Label fx:id="libraryInfo" styleClass="card-subtitle" wrapText="true"/>
+            <HBox spacing="10">
+                <Button text="Gérer dans Ma musique" styleClass="secondary-button" onAction="#onOpenLibrary"/>
+                <Button text="Vider la bibliothèque" styleClass="danger-button" onAction="#onClearLibrary"/>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="card" spacing="8">
+            <Label styleClass="card-title" text="Préférences musicales"/>
+            <Label styleClass="card-subtitle" wrapText="true"
+                   text="Dans cette version, tes préférences sont apprises à partir de tes favoris, de tes écoutes et des humeurs que tu associes aux morceaux. Le réglage explicite de genres favoris arrivera avec le moteur IA."/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Audio"/>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Volume"/>
+                <Slider fx:id="volumeSlider" max="1" prefWidth="260"/>
+                <Label fx:id="volumeLabel" styleClass="muted"/>
+            </HBox>
+            <Label fx:id="formatsLabel" styleClass="card-subtitle" wrapText="true"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="10">
+            <Label styleClass="card-title" text="Raccourcis clavier"/>
+            <CheckBox fx:id="mediaKeysBox" text="Touches multimédia du clavier (⏯ ⏭ ⏮) même quand H MOOD est en arrière-plan"/>
+            <Label fx:id="mediaKeysStatus" styleClass="card-subtitle" wrapText="true"/>
+            <Label styleClass="shortcut-list" wrapText="true"
+                   text="Espace : lecture / pause    ·    Ctrl + → / ← : titre suivant / précédent&#10;Maj + → / ← : avancer / reculer de 10 s    ·    Ctrl + ↑ / ↓ : volume&#10;Ctrl + M : couper le son    ·    Ctrl + L : paroles    ·    Ctrl + F : rechercher&#10;Ctrl + S : lecture aléatoire    ·    Ctrl + R : répétition    ·    Échap : fermer les paroles"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Jamendo (morceaux complets libres)"/>
+            <Label styleClass="card-subtitle" wrapText="true"
+                   text="Jamendo propose des milliers de morceaux complets d'artistes indépendants sous licence Creative Commons, choisis ici selon l'humeur et pour les ambiances Concentration / Sommeil. Il faut un identifiant d'application gratuit : crée un compte sur devportal.jamendo.com, crée une application, puis colle son « Client ID » ci-dessous."/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Client ID"/>
+                <TextField fx:id="jamendoField" prefWidth="260" promptText="ex. 1a2b3c4d"/>
+                <Button text="Enregistrer et tester" styleClass="primary-button" onAction="#onSaveJamendo"/>
+                <Button text="Créer un client_id ↗" mnemonicParsing="false" styleClass="secondary-button" onAction="#onOpenJamendoPortal"/>
+            </HBox>
+            <Label fx:id="jamendoStatus" styleClass="card-subtitle" wrapText="true"/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="12">
+            <Label styleClass="card-title" text="Données locales"/>
+            <Label fx:id="dataInfo" styleClass="card-subtitle" wrapText="true"/>
+            <HBox spacing="10">
+                <Button text="Ouvrir le dossier des données" styleClass="secondary-button" onAction="#onOpenDataFolder"/>
+                <Button text="Effacer l'historique d'écoute et d'humeur" styleClass="danger-button" onAction="#onClearHistory"/>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="card" spacing="8">
+            <Label styleClass="card-title" text="Intelligence artificielle"/>
+            <Label fx:id="aiStatus"/>
+            <Label styleClass="card-subtitle" wrapText="true"
+                   text="L'architecture est prête : une interface AiProvider permet de brancher le fournisseur de ton choix (OpenAI, Anthropic, Mistral, modèle local…). Aucun fournisseur n'est connecté dans cette version : l'assistant fonctionne en interprétation locale par mots-clés et le dit à chaque réponse."/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="8">
+            <Label styleClass="card-title" text="Confidentialité et catalogue en ligne"/>
+            <Label styleClass="card-subtitle" wrapText="true"
+                   text="Ta bibliothèque, ton historique, tes humeurs et tes préférences restent sur ton ordinateur (base SQLite locale). La page Découvrir, les tendances et les suggestions en ligne interrogent les API publiques de Deezer, Apple, Audius, MusicBrainz et (si tu l'as configuré) Jamendo : seuls le terme recherché, le genre ou l'humeur choisis sont envoyés, aucune donnée personnelle. Les morceaux sont lus en streaming, jamais téléchargés. H MOOD n'utilise ni caméra ni microphone : c'est toi qui choisis ton humeur."/>
+        </VBox>
+
+        <VBox styleClass="card" spacing="8">
+            <Label styleClass="card-title" text="À propos"/>
+            <Label fx:id="aboutLabel" styleClass="card-subtitle" wrapText="true"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

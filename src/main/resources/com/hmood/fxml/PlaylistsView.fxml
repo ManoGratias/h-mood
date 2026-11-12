@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Playlists + Studio playlists -->
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hmood.controller.PlaylistsController"
+      styleClass="page" spacing="20">
+
+    <!-- Liste des playlists -->
+    <VBox spacing="12" minWidth="270" prefWidth="290" maxWidth="300">
+        <Label styleClass="page-title" text="Playlists"/>
+        <HBox spacing="8">
+            <Button fx:id="newButton" text="Nouvelle" styleClass="secondary-button" onAction="#onNew"/>
+            <Button fx:id="studioButton" text="Studio playlists" styleClass="primary-button" onAction="#onStudio"/>
+        </HBox>
+        <ListView fx:id="playlistList" VBox.vgrow="ALWAYS" styleClass="playlist-list"/>
+    </VBox>
+
+    <!-- Détail -->
+    <StackPane HBox.hgrow="ALWAYS">
+        <VBox fx:id="detailPane" spacing="14" styleClass="card">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox HBox.hgrow="ALWAYS" spacing="4">
+                    <Label fx:id="playlistName" styleClass="detail-title"/>
+                    <Label fx:id="playlistInfo" styleClass="page-subtitle" wrapText="true"/>
+                </VBox>
+                <Button fx:id="playButton" text="Lire" styleClass="primary-button" onAction="#onPlay"/>
+                <Button text="Renommer" styleClass="secondary-button" onAction="#onRename"/>
+                <Button text="Supprimer" styleClass="danger-button" onAction="#onDelete"/>
+            </HBox>
+            <TableView fx:id="trackTable" VBox.vgrow="ALWAYS"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Button fx:id="upButton" text="Monter" styleClass="secondary-button" onAction="#onMoveUp"/>
+                <Button fx:id="downButton" text="Descendre" styleClass="secondary-button" onAction="#onMoveDown"/>
+                <Button fx:id="removeButton" text="Retirer de la playlist" styleClass="secondary-button" onAction="#onRemove"/>
+                <Label styleClass="muted" text="Astuce : ajoute des morceaux depuis Ma musique (clic droit › Ajouter à la playlist)."/>
+            </HBox>
+        </VBox>
+        <VBox fx:id="noSelection" styleClass="empty-state" alignment="CENTER" spacing="8">
+            <Label styleClass="empty-title" text="Aucune playlist sélectionnée"/>
+            <Label styleClass="muted" text="Crée une playlist ou génère-la avec Studio playlists (humeur, genre, décennie, durée)."/>
+        </VBox>
+    </StackPane>
+</HBox>

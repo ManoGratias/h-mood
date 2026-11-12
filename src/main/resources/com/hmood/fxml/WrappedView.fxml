@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Bilan du mois (H MOOD Wrapped) : calculé sur l'historique local, exportable en image story -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.WrappedController" fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="18">
+        <VBox spacing="2">
+            <Label styleClass="page-title" text="Mon bilan"/>
+            <Label styleClass="page-subtitle" wrapText="true"
+                   text="Ton mois en musique, calculé uniquement à partir de ce que tu as écouté dans H MOOD (en local, rien n'est envoyé). Exporte-le en image pour tes stories."/>
+        </VBox>
+        <HBox fx:id="body" spacing="34"/>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="512" height="512">
+  <!-- Logo H MOOD : un « H » dont la barre centrale est un égaliseur -->
+  <defs>
+    <linearGradient id="ice" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#BDEFFF"/>
+      <stop offset="1" stop-color="#45BFEF"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="10" fill="#101F32"/>
+  <g fill="url(#ice)" transform="translate(8.16 8.16) scale(0.66)">
+    <rect x="4" y="4" width="7" height="40" rx="3.5"/>
+    <rect x="37" y="4" width="7" height="40" rx="3.5"/>
+    <rect x="12" y="20" width="3.2" height="8" rx="1.6"/>
+    <rect x="17.2" y="16" width="3.2" height="16" rx="1.6"/>
+    <rect x="22.4" y="12" width="3.2" height="24" rx="1.6"/>
+    <rect x="27.6" y="16" width="3.2" height="16" rx="1.6"/>
+    <rect x="32.8" y="20" width="3.2" height="8" rx="1.6"/>
+  </g>
+</svg>

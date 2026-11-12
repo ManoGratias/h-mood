@@ -1,0 +1,46 @@
+/* =====================================================================
+   Thème ICE BLUE
+   Bleu glacier #BDEFFF · Bleu ciel #83DFFF · Bleu électrique #45BFEF
+   Blanc bleuté #DDF8FF · Bleu nuit #101F32 · Noir profond #0A1422
+   ===================================================================== */
+
+.root {
+    -hm-bg: #0A1422;
+    -hm-bg-2: #101F32;
+    -hm-player: linear-gradient(to right, #0E1B2C, #101F32 50%, #0E1B2C);
+    -hm-app-bg: linear-gradient(to bottom right, #0A1422 0%, #0D1A2B 55%, #10233A 100%);
+    -hm-surface: rgba(189, 239, 255, 0.045);
+    -hm-surface-hover: rgba(189, 239, 255, 0.09);
+    -hm-input: rgba(189, 239, 255, 0.06);
+    -hm-row-alt: rgba(189, 239, 255, 0.018);
+    -hm-border: rgba(189, 239, 255, 0.10);
+    -hm-border-strong: rgba(189, 239, 255, 0.18);
+    -hm-track: rgba(189, 239, 255, 0.16);
+    -hm-text: #DDF8FF;
+    -hm-text-muted: rgba(221, 248, 255, 0.60);
+    -hm-accent: #45BFEF;
+    -hm-accent-2: #83DFFF;
+    -hm-accent-3: #BDEFFF;
+    -hm-accent-soft: rgba(69, 191, 239, 0.16);
+    -hm-accent-soft-strong: rgba(69, 191, 239, 0.28);
+    -hm-on-accent: #0A1422;
+    -hm-gradient: linear-gradient(to right, #45BFEF, #83DFFF 60%, #BDEFFF);
+    -hm-gradient-diag: linear-gradient(to bottom right, #BDEFFF, #83DFFF 45%, #45BFEF);
+    -hm-logo: linear-gradient(to bottom, #BDEFFF, #45BFEF);
+    -hm-cover: linear-gradient(to bottom right, #45BFEF, #1D4E89);
+    -hm-hero: linear-gradient(to right, rgba(69, 191, 239, 0.26), rgba(131, 223, 255, 0.06) 60%, rgba(16, 31, 50, 0.0));
+
+    /* Palette modena (dialogues, menus, contrôles natifs) */
+    -fx-base: #15283F;
+    -fx-background: #0A1422;
+    -fx-control-inner-background: #101F32;
+    -fx-control-inner-background-alt: #12233A;
+    -fx-accent: #45BFEF;
+    -fx-focus-color: #45BFEF;
+    -fx-faint-focus-color: rgba(69, 191, 239, 0.18);
+    -fx-selection-bar: rgba(69, 191, 239, 0.35);
+    -fx-selection-bar-non-focused: rgba(69, 191, 239, 0.22);
+}
+
+.play-button { -fx-effect: dropshadow(gaussian, rgba(69, 191, 239, 0.55), 18, 0.15, 0, 2); }
+.primary-button { -fx-effect: dropshadow(gaussian, rgba(69, 191, 239, 0.30), 12, 0, 0, 2); }

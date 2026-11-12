@@ -1,0 +1,45 @@
+/* =====================================================================
+   Thème SUNSET ORANGE
+   Orange clair #FFE0C2 · Orange pastel #FFBD91 · Orange lumineux #FFA66F
+   Blanc crème #FFF3E8 · Brun profond #302019
+   ===================================================================== */
+
+.root {
+    -hm-bg: #1E140F;
+    -hm-bg-2: #302019;
+    -hm-player: linear-gradient(to right, #2A1C15, #302019 50%, #2A1C15);
+    -hm-app-bg: linear-gradient(to bottom right, #1E140F 0%, #261912 55%, #34221A 100%);
+    -hm-surface: rgba(255, 224, 194, 0.05);
+    -hm-surface-hover: rgba(255, 224, 194, 0.10);
+    -hm-input: rgba(255, 224, 194, 0.07);
+    -hm-row-alt: rgba(255, 224, 194, 0.02);
+    -hm-border: rgba(255, 224, 194, 0.11);
+    -hm-border-strong: rgba(255, 224, 194, 0.20);
+    -hm-track: rgba(255, 224, 194, 0.18);
+    -hm-text: #FFF3E8;
+    -hm-text-muted: rgba(255, 243, 232, 0.62);
+    -hm-accent: #FFA66F;
+    -hm-accent-2: #FFBD91;
+    -hm-accent-3: #FFE0C2;
+    -hm-accent-soft: rgba(255, 166, 111, 0.16);
+    -hm-accent-soft-strong: rgba(255, 166, 111, 0.28);
+    -hm-on-accent: #302019;
+    -hm-gradient: linear-gradient(to right, #FFA66F, #FFBD91 60%, #FFE0C2);
+    -hm-gradient-diag: linear-gradient(to bottom right, #FFE0C2, #FFBD91 45%, #FFA66F);
+    -hm-logo: linear-gradient(to bottom, #FFE0C2, #FFA66F);
+    -hm-cover: linear-gradient(to bottom right, #FFA66F, #8A4B2E);
+    -hm-hero: linear-gradient(to right, rgba(255, 166, 111, 0.26), rgba(255, 189, 145, 0.06) 60%, rgba(48, 32, 25, 0.0));
+
+    -fx-base: #3A281F;
+    -fx-background: #1E140F;
+    -fx-control-inner-background: #302019;
+    -fx-control-inner-background-alt: #36251D;
+    -fx-accent: #FFA66F;
+    -fx-focus-color: #FFA66F;
+    -fx-faint-focus-color: rgba(255, 166, 111, 0.18);
+    -fx-selection-bar: rgba(255, 166, 111, 0.35);
+    -fx-selection-bar-non-focused: rgba(255, 166, 111, 0.22);
+}
+
+.play-button { -fx-effect: dropshadow(gaussian, rgba(255, 166, 111, 0.55), 18, 0.15, 0, 2); }
+.primary-button { -fx-effect: dropshadow(gaussian, rgba(255, 166, 111, 0.30), 12, 0, 0, 2); }

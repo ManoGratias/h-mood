@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Voyage temporel : ambiances musicales par époque -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.TimeMachineController" fitToWidth="true" styleClass="page-scroll">
+    <VBox styleClass="page" spacing="20">
+        <VBox spacing="2">
+            <Label styleClass="page-title" text="Voyage temporel"/>
+            <Label styleClass="page-subtitle" wrapText="true"
+                   text="Remonte le temps : les vrais tubes de chaque époque, filtrés par genre et par ambiance."/>
+        </VBox>
+        <HBox fx:id="decades" spacing="14"/>
+        <VBox spacing="8">
+            <Label styleClass="section-label" text="GENRE"/>
+            <FlowPane fx:id="genres" hgap="8" vgap="8"/>
+        </VBox>
+        <VBox spacing="8">
+            <Label styleClass="section-label" text="AMBIANCE"/>
+            <FlowPane fx:id="ambiances" hgap="8" vgap="8"/>
+        </VBox>
+        <VBox fx:id="eraBox" spacing="14"/>
+        <VBox fx:id="localBox" spacing="10" styleClass="card"/>
+    </VBox>
+</ScrollPane>
