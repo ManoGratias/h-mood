@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -157,18 +158,32 @@ public final class LyricsOverlay extends StackPane {
     }
 
     private void show(Track t, Lyrics lyrics, boolean preview) {
+        String source = lyrics.source();
+        boolean localTrack = !t.isRemote();
+        if (LyricsService.NEEDS_ARTIST.equals(source)) {
+            buildInfo(t, null);
+            linesBox.getChildren().add(message("Paroles introuvables d'après le titre seul."));
+            linesBox.getChildren().add(infoForm(t, "Le titre est peut-être mal orthographié, ou plusieurs chansons portent ce nom. "
+                    + "Corrige le titre ou indique l'artiste."));
+            return;
+        }
         if (lyrics.instrumental()) {
-            buildInfo(t, "Source : LRCLIB");
+            buildInfo(t, "Source : " + source);
             linesBox.getChildren().add(message("♪  Morceau instrumental"));
             return;
         }
         if (lyrics.isEmpty()) {
             buildInfo(t, null);
-            linesBox.getChildren().add(message("Aucune parole trouvée sur LRCLIB pour ce titre."));
+            linesBox.getChildren().add(message("Aucune parole trouvée sur " + source + " pour ce titre."));
+            if (localTrack) {
+                linesBox.getChildren().add(infoForm(t, "Titre ou artiste mal écrit ? Corrige-les et relance la recherche.\n"
+                        + "Tu peux aussi placer un fichier .lrc du même nom à côté du morceau."));
+            }
             return;
         }
         if (lyrics.synced() && !preview) {
-            buildInfo(t, "Paroles synchronisées · LRCLIB\nClique sur une ligne pour y aller.");
+            buildInfo(t, "Paroles synchronisées · " + source + "\nClique sur une ligne pour y aller.");
+            addMatchedNote(t, lyrics);
             lines = lyrics.lines();
             for (Line line : lines) {
                 Label l = new Label(line.text().isBlank() ? "♪" : line.text());
@@ -181,8 +196,9 @@ public final class LyricsOverlay extends StackPane {
             highlight(ctx.player().positionMsProperty().get());
         } else {
             buildInfo(t, preview
-                    ? "Paroles complètes · LRCLIB\nExtrait 30 s : la synchronisation n'est possible qu'avec le morceau complet."
-                    : "Paroles non synchronisées · LRCLIB");
+                    ? "Paroles complètes · " + source + "\nExtrait 30 s : la synchronisation n'est possible qu'avec le morceau complet."
+                    : "Paroles non synchronisées · " + source);
+            addMatchedNote(t, lyrics);
             String text = lyrics.plain() != null ? lyrics.plain()
                     : String.join("\n", lyrics.lines().stream().map(Line::text).toList());
             Label plain = new Label(text);
@@ -193,6 +209,63 @@ public final class LyricsOverlay extends StackPane {
             return;
         }
         linesBox.setPadding(new Insets(220, 20, 260, 10));
+    }
+
+    /** Paroles reconnues d'après le titre seul : on dit quelle chanson a été retenue, avec un moyen de corriger. */
+    private void addMatchedNote(Track t, Lyrics lyrics) {
+        if (lyrics.matchedSong() == null) return;
+        Label note = Ui.label("Reconnu d'après le titre : « " + lyrics.matchedSong() + " »."
+                + (lyrics.synced() ? "" : "\nSynchronisation impossible : ton fichier est une autre version."), "lyrics-note");
+        note.setWrapText(true);
+        Button wrong = new Button("Pas la bonne chanson ?");
+        wrong.getStyleClass().add("chip-button");
+        wrong.setMnemonicParsing(false);
+        wrong.setOnAction(e -> {
+            linesBox.getChildren().setAll(message("Corrige le titre ou indique l'artiste :"),
+                    infoForm(t, "La recherche se fera avec ces informations."));
+            linesBox.setPadding(new Insets(20, 20, 60, 10));
+            labels.clear();
+            lines = List.of();
+        });
+        info.getChildren().addAll(note, wrong);
+    }
+
+    /** Formulaire pour corriger titre et artiste d'un morceau importé, puis relancer la recherche. */
+    private Node infoForm(Track t, String hint) {
+        TextField artist = new TextField(LyricsService.hasArtist(t) ? t.artist() : "");
+        artist.setPromptText("Artiste (facultatif)");
+        artist.getStyleClass().add("search-field");
+        TextField title = new TextField(LyricsService.searchTitle(t));
+        title.setPromptText("Titre");
+        title.getStyleClass().add("search-field");
+        Button save = new Button("Enregistrer et chercher les paroles");
+        save.getStyleClass().add("primary-button");
+        save.setMnemonicParsing(false);
+        Label note = new Label(hint + "\nLe titre et l'artiste sont corrigés dans H MOOD, le fichier n'est pas modifié.");
+        note.getStyleClass().add("muted");
+        note.setWrapText(true);
+        Runnable submit = () -> {
+            if (title.getText().isBlank()) {
+                ctx.notify("Indique le titre.");
+                return;
+            }
+            try {
+                Track updated = ctx.library().setInfo(t, title.getText(), artist.getText());
+                ctx.player().refreshTrack(updated); // recharge les paroles si c'est le morceau en cours
+                ctx.bumpLibrary();
+                if (ctx.player().getCurrent() == null || ctx.player().getCurrent().id() != updated.id()) load(updated);
+            } catch (RuntimeException e) {
+                ctx.notify(e.getMessage());
+            }
+        };
+        save.setOnAction(e -> submit.run());
+        artist.setOnAction(e -> submit.run());
+        title.setOnAction(e -> submit.run());
+        VBox form = new VBox(10, artist, title, save, note);
+        form.setMaxWidth(460);
+        form.setPadding(new Insets(10, 0, 0, 0));
+        javafx.application.Platform.runLater(artist::requestFocus);
+        return form;
     }
 
     private void highlight(long positionMs) {

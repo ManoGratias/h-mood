@@ -116,6 +116,17 @@ public final class LibraryService {
         return s == null ? "" : s;
     }
 
+    /** Corrige le titre et l'artiste (utile pour les fichiers sans tags, et pour trouver leurs paroles). */
+    public Track setInfo(Track t, String title, String artist) {
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Le titre ne peut pas être vide.");
+        }
+        String a = artist == null || artist.isBlank() ? null : artist.trim();
+        tracks.setInfo(t.id(), title, a);
+        return new Track(t.id(), t.filePath(), title.trim(), a, t.album(), t.genre(), t.year(), t.durationMs(),
+                t.mood(), t.coverPath(), t.playCount(), t.favorite());
+    }
+
     public Track setMood(Track t, Mood mood) {
         tracks.setMood(t.id(), mood);
         return t.withMood(mood);

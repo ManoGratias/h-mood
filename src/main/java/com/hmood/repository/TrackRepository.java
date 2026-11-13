@@ -111,6 +111,29 @@ public final class TrackRepository {
         }
     }
 
+    /** Corrige le titre et l'artiste d'un morceau (dans la bibliothèque uniquement, le fichier n'est pas modifié). */
+    public void setInfo(long trackId, String title, String artist) {
+        try (Connection c = db.connect()) {
+            c.setAutoCommit(false);
+            try {
+                String artistName = artist == null || artist.isBlank() ? Track.UNKNOWN_ARTIST : artist.trim();
+                long artistId = upsertArtist(c, artistName);
+                try (PreparedStatement ps = c.prepareStatement("UPDATE tracks SET title = ?, artist_id = ? WHERE id = ?")) {
+                    ps.setString(1, title.trim());
+                    ps.setLong(2, artistId);
+                    ps.setLong(3, trackId);
+                    ps.executeUpdate();
+                }
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Modification du morceau impossible", e);
+        }
+    }
+
     public void setMood(long trackId, Mood mood) {
         update("UPDATE tracks SET mood = ? WHERE id = ?", mood == null ? null : mood.name(), trackId);
     }

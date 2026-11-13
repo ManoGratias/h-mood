@@ -102,6 +102,8 @@ public final class LibraryController implements PageController {
         }
     };
 
+    private final ChangeListener<Number> libraryListener = (o, a, b) -> reload();
+
     public LibraryController(AppContext ctx) {
         this.ctx = ctx;
     }
@@ -143,6 +145,7 @@ public final class LibraryController implements PageController {
         buildRows();
         setupDragAndDrop();
         ctx.player().currentProperty().addListener(new WeakChangeListener<>(currentTrackListener));
+        ctx.libraryRevisionProperty().addListener(new WeakChangeListener<>(libraryListener)); // ex. titre corrigé depuis les paroles
         reload();
     }
 
@@ -521,6 +524,11 @@ public final class LibraryController implements PageController {
         noMood.setOnAction(e -> updateTracks(targets, t -> ctx.library().setMood(t, null)));
         moodMenu.getItems().add(noMood);
 
+        MenuItem editInfo = new MenuItem("Modifier le titre et l'artiste…");
+        editInfo.setOnAction(e -> Dialogs.askTrackInfo(ctx, track.title(),
+                        com.hmood.music.service.LyricsService.hasArtist(track) ? track.artist() : "")
+                .ifPresent(v -> updateTracks(List.of(track), t -> ctx.library().setInfo(t, v[0], v[1]))));
+
         MenuItem favorite = new MenuItem(track.favorite() ? "Retirer des favoris" : "Ajouter aux favoris");
         boolean makeFavorite = !track.favorite();
         favorite.setOnAction(e -> updateTracks(targets,
@@ -537,7 +545,7 @@ public final class LibraryController implements PageController {
             }
         });
 
-        return new ContextMenu(play, enqueue, toPlaylist, moodMenu, favorite, new SeparatorMenuItem(), remove);
+        return new ContextMenu(play, enqueue, toPlaylist, moodMenu, favorite, editInfo, new SeparatorMenuItem(), remove);
     }
 
     private void addToPlaylist(long playlistId, String name, List<Track> tracks) {

@@ -37,4 +37,30 @@ public final class Dialogs {
         prepare(dialog, ctx);
         return dialog.showAndWait().map(String::trim).filter(s -> !s.isEmpty());
     }
+
+    /** Titre et artiste d'un morceau : renvoie {titre, artiste} (artiste vide = inconnu). */
+    public static Optional<String[]> askTrackInfo(AppContext ctx, String title, String artist) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("H MOOD");
+        dialog.setHeaderText("Modifier le titre et l'artiste");
+        javafx.scene.control.TextField titleField = new javafx.scene.control.TextField(title);
+        javafx.scene.control.TextField artistField = new javafx.scene.control.TextField(artist);
+        artistField.setPromptText("Artiste inconnu");
+        javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.addRow(0, new javafx.scene.control.Label("Titre :"), titleField);
+        grid.addRow(1, new javafx.scene.control.Label("Artiste :"), artistField);
+        javafx.scene.control.Label note = new javafx.scene.control.Label("Modifié dans H MOOD uniquement : le fichier n'est pas touché.");
+        note.getStyleClass().add("muted");
+        grid.add(note, 0, 2, 2, 1);
+        titleField.setPrefColumnCount(28);
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        prepare(dialog, ctx);
+        javafx.application.Platform.runLater(artistField::requestFocus);
+        return dialog.showAndWait().filter(b -> b == ButtonType.OK)
+                .filter(b -> !titleField.getText().isBlank())
+                .map(b -> new String[]{titleField.getText().trim(), artistField.getText().trim()});
+    }
 }
