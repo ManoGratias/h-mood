@@ -104,13 +104,7 @@ public final class MainController implements Navigator {
             updateThemeButton();
             visualizer.setColor(Color.web(t.accent()));
         });
-        Page start = Page.HOME;
-        try {
-            start = Page.valueOf(System.getProperty("hmood.page", "HOME")); // page de démarrage (utile en démo)
-        } catch (IllegalArgumentException ignored) {
-            // valeur inconnue : accueil
-        }
-        navigate(start);
+        ouvrirSession();
         appRoot.sceneProperty().addListener((o, old, scene) -> {
             if (scene != null) scene.addEventFilter(javafx.scene.input.KeyEvent.KEY_PRESSED, this::onShortcut);
         });
@@ -135,8 +129,15 @@ public final class MainController implements Navigator {
     }
 
     private void buildNav() {
+        navBox.getChildren().clear();
+        navButtons.clear();
+        // Polymorphisme : chaque type d'utilisateur (Auditeur, Admin) dit quelles parties il voit.
+        com.hmood.projet4.modele.Utilisateur u = ctx.projet4().utilisateur();
+        java.util.Set<com.hmood.projet4.modele.Espace> espaces = u == null
+                ? java.util.EnumSet.allOf(com.hmood.projet4.modele.Espace.class) : u.espaces();
         Page.Section section = null;
         for (Page page : Page.values()) {
+            if (!espaces.contains(page.espace())) continue;
             if (page.section() != section) {
                 section = page.section();
                 if (section.title() != null) {
@@ -172,6 +173,39 @@ public final class MainController implements Navigator {
             navButtons.put(page, button);
             navBox.getChildren().add(button);
         }
+        if (u != null) navBox.getChildren().add(sessionBox(u));
+    }
+
+    /** Bas du menu : utilisateur connecté, son rôle, et la déconnexion. */
+    private javafx.scene.Node sessionBox(com.hmood.projet4.modele.Utilisateur u) {
+        Label name = Ui.label(u.getIdentifiant(), "session-name");
+        Label role = Ui.label(u.role(), "session-role");
+        VBox texts = new VBox(0, name, role);
+        javafx.scene.control.Button logout = new javafx.scene.control.Button(null, Icons.icon(Icons.LOGOUT, 16));
+        logout.getStyleClass().add("icon-button");
+        logout.setTooltip(new Tooltip("Se déconnecter"));
+        logout.setOnAction(e -> ctx.deconnecter());
+        HBox box = new HBox(10, texts, Ui.hSpacer(), logout);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add("session-box");
+        return box;
+    }
+
+    /** Après une connexion : menu de cet utilisateur et page de départ (Administration pour l'Admin). */
+    public void ouvrirSession() {
+        buildNav();
+        com.hmood.projet4.modele.Utilisateur u = ctx.projet4().utilisateur();
+        Page start = u != null && u.espaces().contains(com.hmood.projet4.modele.Espace.ADMINISTRATION) ? Page.ADMIN : Page.HOME;
+        String forced = System.getProperty("hmood.page");
+        if (forced != null) {
+            try {
+                Page p = Page.valueOf(forced);
+                if (u == null || u.espaces().contains(p.espace())) start = p;
+            } catch (IllegalArgumentException ignored) {
+                // valeur inconnue : page par défaut
+            }
+        }
+        navigate(start);
     }
 
     @Override

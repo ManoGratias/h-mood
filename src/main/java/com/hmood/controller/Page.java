@@ -7,11 +7,13 @@ import java.util.List;
 /** Pages de l'application. Une page sans FXML affiche un état « prévu, non disponible ». */
 public enum Page {
 
+    ADMIN("Administration", Icons.SHIELD, "AdminView.fxml", Section.MENU, null, null, List.of()),
     HOME("Accueil", Icons.HOME, "HomeView.fxml", Section.MENU, null, null, List.of()),
     DISCOVER("Découvrir", Icons.EXPLORE, "DiscoverView.fxml", Section.MENU, null, null, List.of()),
     MY_MUSIC("Ma musique", Icons.LIBRARY, "LibraryView.fxml", Section.MENU, null, null, List.of()),
     PLAYLISTS("Playlists", Icons.PLAYLIST, "PlaylistsView.fxml", Section.MENU, null, null, List.of()),
 
+    CATALOGUE_IA("Catalogue IA", Icons.CATALOG, "CatalogueIaView.fxml", Section.INTELLIGENCE, null, null, List.of()),
     MOOD_SCANNER("Scanner d'humeur", Icons.MOOD, "MoodScannerView.fxml", Section.INTELLIGENCE, null, null, List.of()),
     AI_DJ("DJ IA", Icons.HEADPHONES, "DjView.fxml", Section.INTELLIGENCE, null, null, List.of()),
     MUSIC_DNA("ADN musical", Icons.DNA, "DnaView.fxml", Section.INTELLIGENCE, null, null, List.of()),
@@ -64,4 +66,14 @@ public enum Page {
     public String hint() { return hint; }
     public List<String> plannedFeatures() { return plannedFeatures; }
     public boolean isAvailable() { return fxml != null; }
+
+    /** Partie de l'application à laquelle appartient la page : le menu n'affiche que celles de l'utilisateur connecté. */
+    public com.hmood.projet4.modele.Espace espace() {
+        return switch (this) {
+            case ADMIN -> com.hmood.projet4.modele.Espace.ADMINISTRATION;
+            case CATALOGUE_IA -> com.hmood.projet4.modele.Espace.CATALOGUE_IA;
+            case SETTINGS -> com.hmood.projet4.modele.Espace.PARAMETRES;
+            default -> com.hmood.projet4.modele.Espace.ECOUTE;
+        };
+    }
 }

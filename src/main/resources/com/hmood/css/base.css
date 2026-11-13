@@ -845,3 +845,15 @@
 .lyric-message { -fx-font-size: 20px; -fx-text-fill: rgba(255,255,255,0.7); }
 
 .shortcut-list { -fx-text-fill: -hm-text; -fx-font-size: 12.5px; -fx-line-spacing: 5; -fx-opacity: 0.85; }
+
+/* ------------------------------------------------------------- Projet 4 : connexion, session */
+.connexion-root { -fx-background-color: -hm-app-bg; }
+.connexion-card { -fx-background-color: -hm-bg-2; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 40, 0.15, 0, 12); }
+.connexion-title { -fx-text-fill: -hm-text; -fx-font-size: 28px; -fx-font-weight: bold; }
+.connexion-error { -fx-text-fill: #FF7A7A; -fx-font-size: 13px; }
+.session-box { -fx-background-color: -hm-surface; -fx-background-radius: 14; -fx-padding: 10 12; }
+.session-name { -fx-text-fill: -hm-text; -fx-font-weight: bold; -fx-font-size: 13px; }
+.session-role { -fx-text-fill: -hm-text-muted; -fx-font-size: 11px; }
+.p4-row { -fx-background-color: -hm-surface; -fx-background-radius: 12; -fx-padding: 8 12; }
+.p4-row:hover { -fx-background-color: -hm-surface-hover; }
+.p4-rejet { -fx-text-fill: #FFB36B; -fx-font-size: 12px; }

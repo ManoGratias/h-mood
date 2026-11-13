@@ -1,5 +1,7 @@
 package com.hmood.app;
 
+import com.hmood.controller.MainController;
+import com.hmood.ui.ConnexionView;
 import com.hmood.ui.Logo;
 import com.hmood.util.AppPaths;
 import javafx.application.Application;
@@ -9,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.PrintWriter;
@@ -18,6 +21,9 @@ import java.io.StringWriter;
 public class HMoodApp extends Application {
 
     private AppContext context;
+    private ConnexionView connexion;
+    private Parent main;
+    private MainController mainController;
 
     @Override
     public void start(Stage stage) {
@@ -26,9 +32,17 @@ public class HMoodApp extends Application {
             context.setPrimaryStage(stage);
             context.setHostServices(getHostServices());
 
-            FXMLLoader loader = new FXMLLoader(HMoodApp.class.getResource("/com/hmood/fxml/MainView.fxml"));
-            loader.setControllerFactory(context.controllerFactory());
-            Parent root = loader.load();
+            // Écran de connexion d'abord ; la fenêtre principale est construite après la première connexion,
+            // pour que son menu corresponde au type de l'utilisateur (Auditeur ou Admin).
+            StackPane root = new StackPane();
+            connexion = new ConnexionView(context.projet4(), u -> ouvrirSession(root));
+            root.getChildren().add(connexion);
+            context.setDeconnexion(() -> {
+                if (main != null) main.setVisible(false);
+                connexion.reinitialiser();
+                connexion.setVisible(true);
+                connexion.toFront();
+            });
 
             Scene scene = new Scene(root, 1440, 880);
             context.themes().register(scene);
@@ -39,6 +53,25 @@ public class HMoodApp extends Application {
             stage.setMinHeight(720);
             stage.setScene(scene);
             stage.show();
+        } catch (Exception e) {
+            showFatal(e);
+        }
+    }
+
+    /** Après connexion : construit la fenêtre principale la première fois, sinon recharge son menu. */
+    private void ouvrirSession(StackPane root) {
+        try {
+            if (main == null) {
+                FXMLLoader loader = new FXMLLoader(HMoodApp.class.getResource("/com/hmood/fxml/MainView.fxml"));
+                loader.setControllerFactory(context.controllerFactory());
+                main = loader.load();
+                mainController = loader.getController();
+                root.getChildren().add(0, main);
+            } else {
+                mainController.ouvrirSession();
+            }
+            main.setVisible(true);
+            connexion.setVisible(false);
         } catch (Exception e) {
             showFatal(e);
         }

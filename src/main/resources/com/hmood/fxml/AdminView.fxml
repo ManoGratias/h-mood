@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- Projet 4 : page construite par AdminController -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hmood.controller.AdminController" fitToWidth="true" styleClass="page-scroll">
+    <VBox fx:id="contenu" styleClass="page" spacing="18"/>
+</ScrollPane>

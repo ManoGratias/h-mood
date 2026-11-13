@@ -73,6 +73,9 @@ public final class AppContext {
     private final MusicCatalogService musicCatalogService;
     private final PlaybackService musicPlayback;
     private final com.hmood.music.provider.JamendoProvider jamendo;
+    /** Partie « Projet 4 » : comptes, catalogue par genre, recommandeurs (sauvegarde par sérialisation). */
+    private final com.hmood.projet4.Projet4Service projet4;
+    private Runnable deconnexion = () -> { };
     private final com.hmood.music.service.OfflineService offlineService;
     private final com.hmood.music.service.LyricsService lyricsService;
     private com.hmood.repository.WrappedRepository wrappedRepository;
@@ -121,6 +124,7 @@ public final class AppContext {
         AppleMusicProvider apple = new AppleMusicProvider();
         AudiusProvider audius = new AudiusProvider(audiusCatalog);
         jamendo = new com.hmood.music.provider.JamendoProvider(settingsService::jamendoClientId);
+        projet4 = new com.hmood.projet4.Projet4Service(dataDir.resolve("projet4.ser"), jamendo);
         CatalogCache cache = new CatalogCache(database);
         trendingService = new TrendingService(Map.of(deezer.id(), deezer, apple.id(), apple, audius.id(), audius, jamendo.id(), jamendo), cache);
         newReleasesService = new NewReleasesService(trendingService);
@@ -343,6 +347,16 @@ public final class AppContext {
     public MusicCatalogService musicCatalog() { return musicCatalogService; }
     public PlaybackService musicPlayback() { return musicPlayback; }
     public com.hmood.music.provider.JamendoProvider jamendo() { return jamendo; }
+    public com.hmood.projet4.Projet4Service projet4() { return projet4; }
+
+    /** Action « Déconnexion » (fournie par HMoodApp : retour à l'écran de connexion). */
+    public void setDeconnexion(Runnable action) { this.deconnexion = action; }
+
+    public void deconnecter() {
+        playerService.stop();
+        projet4.deconnecter();
+        deconnexion.run();
+    }
     public com.hmood.music.service.OfflineService offline() { return offlineService; }
     public com.hmood.music.service.LyricsService lyrics() { return lyricsService; }
     public MusicDiscoveryService discovery() { return discoveryService; }
