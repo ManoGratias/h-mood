@@ -62,7 +62,6 @@ public final class LyricsOverlay extends StackPane {
      */
     private boolean calageExtrait;
     private boolean decalageConnu = true;
-    private Label bandeauCalage;
 
     private final ChangeListener<Number> positionListener = (o, a, v) -> highlight(v.longValue());
     private final ChangeListener<Track> trackListener = (o, a, t) -> load(t);
@@ -140,7 +139,6 @@ public final class LyricsOverlay extends StackPane {
         offsetLabel = null;
         calageExtrait = false;
         decalageConnu = true;
-        bandeauCalage = null;
         linesBox.getChildren().clear();
         scroll.setVvalue(0);
         buildInfo(t, null);
@@ -210,13 +208,6 @@ public final class LyricsOverlay extends StackPane {
             addMatchedNote(t, lyrics);
             addOffsetControls(t, lyrics.approximate());
             decalageConnu = !preview || ctx.settings().hasLyricsOffset(offsetKey);
-            if (!decalageConnu) {
-                bandeauCalage = new Label("👆  Clique sur la ligne que tu entends en ce moment : "
-                        + "ensuite les paroles se mettent en gras toutes seules, au rythme de la musique.");
-                bandeauCalage.getStyleClass().add("lyric-calage");
-                bandeauCalage.setWrapText(true);
-                linesBox.getChildren().add(bandeauCalage);
-            }
             lines = lyrics.lines();
             for (Line line : lines) {
                 Label l = new Label(line.text().isBlank() ? "♪" : line.text());
@@ -253,10 +244,6 @@ public final class LyricsOverlay extends StackPane {
         long position = ctx.player().positionMsProperty().get();
         offsetMs = position + 250 - line.timeMs();
         decalageConnu = true;
-        if (bandeauCalage != null) {
-            linesBox.getChildren().remove(bandeauCalage);
-            bandeauCalage = null;
-        }
         ctx.settings().setLyricsOffset(offsetKey, offsetMs);
         updateOffsetLabel();
         current = -2;
