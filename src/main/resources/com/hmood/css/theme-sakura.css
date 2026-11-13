@@ -1,0 +1,45 @@
+/* =====================================================================
+   Thème ROSE SAKURA
+   Accent #FF7EB3 · #FFB0D0 · #FFDCEB · Fond #1A0E14 / #28161F
+   ===================================================================== */
+
+.root {
+    -hm-bg: #1A0E14;
+    -hm-bg-2: #28161F;
+    -hm-player: linear-gradient(to right, #21121A, #28161F 50%, #21121A);
+    -hm-app-bg: linear-gradient(to bottom right, #1A0E14 0%, #21121A 55%, #3E202E 100%);
+    -hm-surface: rgba(255, 220, 235, 0.045);
+    -hm-surface-hover: rgba(255, 220, 235, 0.09);
+    -hm-input: rgba(255, 220, 235, 0.06);
+    -hm-row-alt: rgba(255, 220, 235, 0.018);
+    -hm-border: rgba(255, 220, 235, 0.1);
+    -hm-border-strong: rgba(255, 220, 235, 0.18);
+    -hm-track: rgba(255, 220, 235, 0.16);
+    -hm-text: #FFEFF6;
+    -hm-text-muted: rgba(255, 239, 246, 0.6);
+    -hm-accent: #FF7EB3;
+    -hm-accent-2: #FFB0D0;
+    -hm-accent-3: #FFDCEB;
+    -hm-accent-soft: rgba(255, 126, 179, 0.16);
+    -hm-accent-soft-strong: rgba(255, 126, 179, 0.28);
+    -hm-on-accent: #1A0E14;
+    -hm-gradient: linear-gradient(to right, #FF7EB3, #FFB0D0 60%, #FFDCEB);
+    -hm-gradient-diag: linear-gradient(to bottom right, #FFDCEB, #FFB0D0 45%, #FF7EB3);
+    -hm-logo: linear-gradient(to bottom, #FFDCEB, #FF7EB3);
+    -hm-cover: linear-gradient(to bottom right, #FF7EB3, #8A2F58);
+    -hm-hero: linear-gradient(to right, rgba(255, 126, 179, 0.26), rgba(255, 176, 208, 0.06) 60%, rgba(40, 22, 31, 0.0));
+
+    /* Palette modena (dialogues, menus, contrôles natifs) */
+    -fx-base: #422231;
+    -fx-background: #1A0E14;
+    -fx-control-inner-background: #28161F;
+    -fx-control-inner-background-alt: #331B26;
+    -fx-accent: #FF7EB3;
+    -fx-focus-color: #FF7EB3;
+    -fx-faint-focus-color: rgba(255, 126, 179, 0.18);
+    -fx-selection-bar: rgba(255, 126, 179, 0.35);
+    -fx-selection-bar-non-focused: rgba(255, 126, 179, 0.22);
+}
+
+.play-button { -fx-effect: dropshadow(gaussian, rgba(255, 126, 179, 0.55), 18, 0.15, 0, 2); }
+.primary-button { -fx-effect: dropshadow(gaussian, rgba(255, 126, 179, 0.3), 12, 0, 0, 2); }

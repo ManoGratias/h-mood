@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
@@ -20,9 +22,10 @@
         <VBox styleClass="card" spacing="12">
             <Label styleClass="card-title" text="Apparence"/>
             <Label styleClass="card-subtitle" text="Choisis l'ambiance visuelle de H MOOD."/>
-            <HBox spacing="12">
-                <ToggleButton fx:id="iceButton" styleClass="theme-choice, theme-ice" text="Bleu Glacier"/>
-                <ToggleButton fx:id="sunsetButton" styleClass="theme-choice, theme-sunset" text="Orange Couchant"/>
+            <FlowPane fx:id="themeChoices" hgap="12" vgap="12"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Changer de thème automatiquement"/>
+                <ComboBox fx:id="themeCycleBox" prefWidth="200"/>
             </HBox>
         </VBox>
 

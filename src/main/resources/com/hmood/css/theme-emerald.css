@@ -1,0 +1,45 @@
+/* =====================================================================
+   Thème VERT ÉMERAUDE
+   Accent #2FD38A · #7BE8B5 · #C2F7DD · Fond #08160F / #0E2219
+   ===================================================================== */
+
+.root {
+    -hm-bg: #08160F;
+    -hm-bg-2: #0E2219;
+    -hm-player: linear-gradient(to right, #0B1C14, #0E2219 50%, #0B1C14);
+    -hm-app-bg: linear-gradient(to bottom right, #08160F 0%, #0B1C14 55%, #113424 100%);
+    -hm-surface: rgba(194, 247, 221, 0.045);
+    -hm-surface-hover: rgba(194, 247, 221, 0.09);
+    -hm-input: rgba(194, 247, 221, 0.06);
+    -hm-row-alt: rgba(194, 247, 221, 0.018);
+    -hm-border: rgba(194, 247, 221, 0.1);
+    -hm-border-strong: rgba(194, 247, 221, 0.18);
+    -hm-track: rgba(194, 247, 221, 0.16);
+    -hm-text: #E3FFF1;
+    -hm-text-muted: rgba(227, 255, 241, 0.6);
+    -hm-accent: #2FD38A;
+    -hm-accent-2: #7BE8B5;
+    -hm-accent-3: #C2F7DD;
+    -hm-accent-soft: rgba(47, 211, 138, 0.16);
+    -hm-accent-soft-strong: rgba(47, 211, 138, 0.28);
+    -hm-on-accent: #08160F;
+    -hm-gradient: linear-gradient(to right, #2FD38A, #7BE8B5 60%, #C2F7DD);
+    -hm-gradient-diag: linear-gradient(to bottom right, #C2F7DD, #7BE8B5 45%, #2FD38A);
+    -hm-logo: linear-gradient(to bottom, #C2F7DD, #2FD38A);
+    -hm-cover: linear-gradient(to bottom right, #2FD38A, #11573A);
+    -hm-hero: linear-gradient(to right, rgba(47, 211, 138, 0.26), rgba(123, 232, 181, 0.06) 60%, rgba(14, 34, 25, 0.0));
+
+    /* Palette modena (dialogues, menus, contrôles natifs) */
+    -fx-base: #123727;
+    -fx-background: #08160F;
+    -fx-control-inner-background: #0E2219;
+    -fx-control-inner-background-alt: #102B1F;
+    -fx-accent: #2FD38A;
+    -fx-focus-color: #2FD38A;
+    -fx-faint-focus-color: rgba(47, 211, 138, 0.18);
+    -fx-selection-bar: rgba(47, 211, 138, 0.35);
+    -fx-selection-bar-non-focused: rgba(47, 211, 138, 0.22);
+}
+
+.play-button { -fx-effect: dropshadow(gaussian, rgba(47, 211, 138, 0.55), 18, 0.15, 0, 2); }
+.primary-button { -fx-effect: dropshadow(gaussian, rgba(47, 211, 138, 0.3), 12, 0, 0, 2); }

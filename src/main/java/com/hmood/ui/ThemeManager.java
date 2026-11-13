@@ -5,6 +5,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,6 +18,8 @@ public final class ThemeManager {
 
     private final ObjectProperty<Theme> theme;
     private final List<Scene> scenes = new ArrayList<>();
+    private Timeline cycle;
+    private int cycleSeconds;
 
     public ThemeManager(Theme initial) {
         theme = new SimpleObjectProperty<>(initial);
@@ -44,8 +49,24 @@ public final class ThemeManager {
     }
 
     public Theme toggle() {
-        theme.set(theme.get().other());
+        theme.set(theme.get().next());
         return theme.get();
+    }
+
+    /** Change de thème automatiquement toutes les {@code seconds} secondes (0 = désactivé). */
+    public void setAutoCycle(int seconds) {
+        if (cycle != null) cycle.stop();
+        cycle = null;
+        cycleSeconds = Math.max(0, seconds);
+        if (cycleSeconds > 0) {
+            cycle = new Timeline(new KeyFrame(Duration.seconds(cycleSeconds), e -> theme.set(theme.get().next())));
+            cycle.setCycleCount(Timeline.INDEFINITE);
+            cycle.play();
+        }
+    }
+
+    public int autoCycleSeconds() {
+        return cycleSeconds;
     }
 
     public ObjectProperty<Theme> themeProperty() {

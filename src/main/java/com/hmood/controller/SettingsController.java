@@ -16,8 +16,13 @@ import java.io.IOException;
 /** Page Settings. */
 public final class SettingsController implements PageController {
 
-    @FXML private ToggleButton iceButton;
-    @FXML private ToggleButton sunsetButton;
+    @FXML private javafx.scene.layout.FlowPane themeChoices;
+    @FXML private javafx.scene.control.ComboBox<String> themeCycleBox;
+
+    private static final String[] CYCLE_LABELS = {"Désactivé", "Toutes les 30 secondes", "Chaque minute", "Toutes les 5 minutes"};
+    private static final int[] CYCLE_SECONDS = {0, 30, 60, 300};
+    private final javafx.beans.value.ChangeListener<Theme> themeFollower = (o, a, t) -> selectTheme(t);
+    private ToggleGroup themeGroup;
     @FXML private TextField nameField;
     @FXML private Label libraryInfo;
     @FXML private Slider volumeSlider;
@@ -37,22 +42,48 @@ public final class SettingsController implements PageController {
         this.ctx = ctx;
     }
 
+    private void selectTheme(Theme t) {
+        for (javafx.scene.control.Toggle toggle : themeGroup.getToggles()) {
+            if (toggle.getUserData() == t && !toggle.isSelected()) toggle.setSelected(true);
+        }
+    }
+
     @FXML
     private void initialize() {
-        ToggleGroup themes = new ToggleGroup();
-        iceButton.setToggleGroup(themes);
-        sunsetButton.setToggleGroup(themes);
-        iceButton.setUserData(Theme.ICE_BLUE);
-        sunsetButton.setUserData(Theme.SUNSET_ORANGE);
-        (ctx.themes().theme() == Theme.ICE_BLUE ? iceButton : sunsetButton).setSelected(true);
-        themes.selectedToggleProperty().addListener((o, old, selected) -> {
+        themeGroup = new ToggleGroup();
+        for (Theme t : Theme.values()) {
+            ToggleButton b = new ToggleButton(t.label());
+            b.getStyleClass().addAll("theme-choice", t.swatchClass());
+            b.setMnemonicParsing(false);
+            b.setUserData(t);
+            b.setToggleGroup(themeGroup);
+            themeChoices.getChildren().add(b);
+        }
+        selectTheme(ctx.themes().theme());
+        themeGroup.selectedToggleProperty().addListener((o, old, selected) -> {
             if (selected == null) {
-                old.setSelected(true); // une option reste toujours sélectionnée
+                if (old != null) old.setSelected(true); // une option reste toujours sélectionnée
                 return;
             }
             Theme theme = (Theme) selected.getUserData();
-            ctx.themes().setTheme(theme);
-            ctx.settings().setTheme(theme);
+            if (theme != ctx.themes().theme()) {
+                ctx.themes().setTheme(theme);
+                ctx.settings().setTheme(theme);
+            }
+        });
+        // la rotation automatique change le thème : la vignette sélectionnée suit
+        ctx.themes().themeProperty().addListener(new javafx.beans.value.WeakChangeListener<>(themeFollower));
+
+        themeCycleBox.getItems().setAll(CYCLE_LABELS);
+        int current = ctx.settings().themeCycleSeconds(); // réglage enregistré (la rotation démarre juste après l'ouverture)
+        int index = 0;
+        for (int i = 0; i < CYCLE_SECONDS.length; i++) if (CYCLE_SECONDS[i] == current) index = i;
+        themeCycleBox.getSelectionModel().select(index);
+        themeCycleBox.valueProperty().addListener((o, a, v) -> {
+            int i = themeCycleBox.getSelectionModel().getSelectedIndex();
+            int seconds = i < 0 ? 0 : CYCLE_SECONDS[i];
+            ctx.themes().setAutoCycle(seconds);
+            ctx.settings().setThemeCycleSeconds(seconds);
         });
 
         nameField.setText(ctx.settings().displayName());

@@ -29,6 +29,21 @@ public final class SettingsService {
         prefs.set(THEME, theme.name());
     }
 
+    /** Intervalle du changement automatique de thème, en secondes (0 = désactivé). */
+    public int themeCycleSeconds() {
+        return prefs.get("theme.cycle_seconds").map(v -> {
+            try {
+                return Math.max(0, Integer.parseInt(v));
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }).orElse(0);
+    }
+
+    public void setThemeCycleSeconds(int seconds) {
+        prefs.set("theme.cycle_seconds", Integer.toString(Math.max(0, seconds)));
+    }
+
     public double volume() {
         return prefs.get(VOLUME).map(v -> {
             try {

@@ -187,6 +187,10 @@ public final class AppContext {
         java.net.CookieHandler.setDefault(new java.net.CookieManager(cookieStore, java.net.CookiePolicy.ACCEPT_ALL));
 
         themeManager = new ThemeManager(settingsService.theme());
+        int cycleSeconds = settingsService.themeCycleSeconds();
+        if (cycleSeconds > 0) {
+            javafx.application.Platform.runLater(() -> themeManager.setAutoCycle(cycleSeconds));
+        }
         currentMood.set(moodService.todayMood().orElse(null));
     }
 

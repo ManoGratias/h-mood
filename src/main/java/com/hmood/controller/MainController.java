@@ -229,7 +229,8 @@ public final class MainController implements Navigator {
     private void updateThemeButton() {
         themeButton.setGraphic(Icons.icon(Icons.PALETTE, 16));
         themeButton.setText(ctx.themes().theme().label());
-        themeButton.setTooltip(new Tooltip("Basculer vers " + ctx.themes().theme().other().label()));
+        themeButton.setTooltip(new Tooltip("Thème suivant : " + ctx.themes().theme().next().label()
+                + (ctx.themes().autoCycleSeconds() > 0 ? " (changement automatique activé)" : "")));
     }
 
     // ------------------------------------------------------------------ barre de lecture

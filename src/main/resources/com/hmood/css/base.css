@@ -277,6 +277,12 @@
 }
 .theme-ice { -fx-background-color: linear-gradient(to bottom right, #0A1422, #101F32 40%, #45BFEF 85%, #BDEFFF); -fx-text-fill: #DDF8FF; }
 .theme-sunset { -fx-background-color: linear-gradient(to bottom right, #1E140F, #302019 40%, #FFA66F 85%, #FFE0C2); -fx-text-fill: #FFF3E8; }
+.theme-violet { -fx-background-color: linear-gradient(to bottom right, #120C1F, #1C1430 40%, #A970FF 85%, #E6D6FF); -fx-text-fill: #F1E9FF; }
+.theme-emerald { -fx-background-color: linear-gradient(to bottom right, #08160F, #0E2219 40%, #2FD38A 85%, #C2F7DD); -fx-text-fill: #E3FFF1; }
+.theme-sakura { -fx-background-color: linear-gradient(to bottom right, #1A0E14, #28161F 40%, #FF7EB3 85%, #FFDCEB); -fx-text-fill: #FFEFF6; }
+.theme-ruby { -fx-background-color: linear-gradient(to bottom right, #18090C, #261015 40%, #F0465A 85%, #FFC9CF); -fx-text-fill: #FFECEE; }
+.theme-gold { -fx-background-color: linear-gradient(to bottom right, #12100A, #1E1A10 40%, #E8B64C 85%, #FBEBC4); -fx-text-fill: #FFF8E6; }
+.theme-graphite { -fx-background-color: linear-gradient(to bottom right, #0E0F11, #17191C 40%, #B8C2CC 85%, #EEF2F5); -fx-text-fill: #F2F4F6; }
 .theme-choice:selected { -fx-border-color: -hm-text; }
 .theme-choice:hover { -fx-opacity: 0.92; }
 

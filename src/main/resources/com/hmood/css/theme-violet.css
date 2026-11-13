@@ -1,0 +1,45 @@
+/* =====================================================================
+   Thème VIOLET AURORE
+   Accent #A970FF · #C9A2FF · #E6D6FF · Fond #120C1F / #1C1430
+   ===================================================================== */
+
+.root {
+    -hm-bg: #120C1F;
+    -hm-bg-2: #1C1430;
+    -hm-player: linear-gradient(to right, #171028, #1C1430 50%, #171028);
+    -hm-app-bg: linear-gradient(to bottom right, #120C1F 0%, #171028 55%, #2A1D45 100%);
+    -hm-surface: rgba(230, 214, 255, 0.045);
+    -hm-surface-hover: rgba(230, 214, 255, 0.09);
+    -hm-input: rgba(230, 214, 255, 0.06);
+    -hm-row-alt: rgba(230, 214, 255, 0.018);
+    -hm-border: rgba(230, 214, 255, 0.1);
+    -hm-border-strong: rgba(230, 214, 255, 0.18);
+    -hm-track: rgba(230, 214, 255, 0.16);
+    -hm-text: #F1E9FF;
+    -hm-text-muted: rgba(241, 233, 255, 0.6);
+    -hm-accent: #A970FF;
+    -hm-accent-2: #C9A2FF;
+    -hm-accent-3: #E6D6FF;
+    -hm-accent-soft: rgba(169, 112, 255, 0.16);
+    -hm-accent-soft-strong: rgba(169, 112, 255, 0.28);
+    -hm-on-accent: #120C1F;
+    -hm-gradient: linear-gradient(to right, #A970FF, #C9A2FF 60%, #E6D6FF);
+    -hm-gradient-diag: linear-gradient(to bottom right, #E6D6FF, #C9A2FF 45%, #A970FF);
+    -hm-logo: linear-gradient(to bottom, #E6D6FF, #A970FF);
+    -hm-cover: linear-gradient(to bottom right, #A970FF, #4B2A86);
+    -hm-hero: linear-gradient(to right, rgba(169, 112, 255, 0.26), rgba(201, 162, 255, 0.06) 60%, rgba(28, 20, 48, 0.0));
+
+    /* Palette modena (dialogues, menus, contrôles natifs) */
+    -fx-base: #2D1F49;
+    -fx-background: #120C1F;
+    -fx-control-inner-background: #1C1430;
+    -fx-control-inner-background-alt: #23193A;
+    -fx-accent: #A970FF;
+    -fx-focus-color: #A970FF;
+    -fx-faint-focus-color: rgba(169, 112, 255, 0.18);
+    -fx-selection-bar: rgba(169, 112, 255, 0.35);
+    -fx-selection-bar-non-focused: rgba(169, 112, 255, 0.22);
+}
+
+.play-button { -fx-effect: dropshadow(gaussian, rgba(169, 112, 255, 0.55), 18, 0.15, 0, 2); }
+.primary-button { -fx-effect: dropshadow(gaussian, rgba(169, 112, 255, 0.3), 12, 0, 0, 2); }
