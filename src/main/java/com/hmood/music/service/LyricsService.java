@@ -75,8 +75,11 @@ public final class LyricsService {
     private static final String APPROX_MARK = "[hm:approx]";
     private static final Pattern TRACK_NUMBER = Pattern.compile("^\\d{1,3}\\s*[-._)]?\\s+(?=\\S)");
 
+    /** Référence gardée : sinon le journal peut être recréé (et redevenir bavard) après un ramasse-miettes. */
+    private static final java.util.logging.Logger TAG_LOG = java.util.logging.Logger.getLogger("org.jaudiotagger");
+
     static {
-        java.util.logging.Logger.getLogger("org.jaudiotagger").setLevel(java.util.logging.Level.OFF);
+        TAG_LOG.setLevel(java.util.logging.Level.OFF);
     }
     private static final Pattern TIME = Pattern.compile("\\[(\\d{1,3}):(\\d{2})(?:[.:](\\d{1,3}))?]");
 
@@ -94,8 +97,14 @@ public final class LyricsService {
             Optional<Lyrics> local = local(file);
             if (local.isPresent()) return local.get();
         }
-        if (!hasArtist(t)) {
-            Lyrics byTitle = byTitleOnly(searchTitle(t), Math.round(t.durationMs() / 1000.0));
+        long fileSeconds = Math.round(t.durationMs() / 1000.0);
+        if (file != null) {
+            // fichier importé : les tags sont souvent mal remplis (« artist », « Zou.FANNY », « Piste 14 »…)
+            Lyrics byNames = byNames(t, file, fileSeconds);
+            if (byNames != null) return byNames;
+        }
+        if (!hasArtist(t) || (file != null && !usableArtist(t.artist(), t.title()))) {
+            Lyrics byTitle = byTitleOnly(file != null && !cleanName(t.title()).isEmpty() ? cleanName(t.title()) : searchTitle(t), fileSeconds);
             return byTitle != null ? byTitle : new Lyrics(List.of(), null, false, NEEDS_ARTIST);
         }
         String artist = t.artist().trim();
@@ -120,6 +129,7 @@ public final class LyricsService {
         }
         if (hit == null) {
             hit = bestMatch(api.get(BASE + "/search?q=" + ApiClient.enc(firstArtist(artist) + " " + clean(title))), seconds);
+            if (hit != null && !sameArtist(hit, artist)) hit = null; // même titre, autre interprète : refusé
         }
         if (hit == null) {
             // aucune version de même durée : on garde les paroles mais sans synchronisation (autre version du titre)
@@ -255,6 +265,110 @@ public final class LyricsService {
                 .replaceAll("\\p{M}", "")
                 .replaceAll("[^\\p{L}\\p{N}\\s]", "");
         return n.trim().replaceAll("\\s+", " ");
+    }
+
+    private static final java.util.Set<String> JUNK_ARTISTS = java.util.Set.of(
+            "artist", "artiste", "unknown", "unknown artist", "artiste inconnu", "inconnu", "various", "various artists",
+            "va", "divers", "compilation", "track", "piste");
+    private static final Pattern JUNK_ARTIST = Pattern.compile("(?i)^(zouk|zou|kompa|compil\\w*)\\s*\\d*$");
+    private static final Pattern GENERIC_TITLE = Pattern.compile("(?i)^(track|piste|plage|titre|audio)\\s*\\d*$");
+    /** Préfixe collé façon « Zou.FANNY » / « Zou.A jamais » (court mot suivi d'un point, sans espace). */
+    private static final Pattern GLUED_PREFIX = Pattern.compile("^[A-Za-z]{2,4}\\.(?=\\S)");
+
+    /** Artiste exploitable : ni vide, ni « artist », « Unknown », « ZOUK4 »… ni identique au titre. */
+    static boolean usableArtist(String artist, String title) {
+        if (artist == null) return false;
+        String a = norm(GLUED_PREFIX.matcher(artist.trim()).replaceFirst(""));
+        if (a.isEmpty() || JUNK_ARTISTS.contains(a) || JUNK_ARTIST.matcher(a).matches()) return false;
+        return title == null || !a.equals(norm(title));
+    }
+
+    /** Nom nettoyé : sans numéro de piste, préfixe collé, « (1) », « feat. … », séparateurs. */
+    static String cleanName(String raw) {
+        if (raw == null) return "";
+        String s = raw.replace('_', ' ').trim();
+        s = GLUED_PREFIX.matcher(s).replaceFirst("");
+        s = TRACK_NUMBER.matcher(s).replaceFirst("");
+        s = s.replaceAll("\\s*\\((\\d+)\\)\\s*", " ");
+        s = s.replaceAll("(?i)\\s*[(\\[]?\\b(feat|ft)\\b\\.?[^)\\]]*[)\\]]?", " ");
+        s = s.replaceAll("\\d+$", ""); // « avec toi11 »
+        s = s.replaceAll("[-–/|]+", " ");
+        s = s.trim().replaceAll("\\s+", " ");
+        return GENERIC_TITLE.matcher(s).matches() ? "" : s;
+    }
+
+    /**
+     * Fichier importé : on interroge LRCLIB avec les noms nettoyés (tags et nom du fichier) et on ne garde un
+     * résultat que s'il est vérifié : tous les mots de son titre figurent dans nos noms, son artiste aussi (ou un
+     * titre d'au moins 3 mots), et sa durée est proche (écart d'un quart au plus).
+     */
+    private Lyrics byNames(Track t, Path file, long seconds) {
+        java.util.LinkedHashSet<String> queries = new java.util.LinkedHashSet<>();
+        String title = cleanName(t.title());
+        String artist = usableArtist(t.artist(), t.title()) ? cleanName(t.artist()) : "";
+        String fileName = cleanName(stem(file));
+        if (!artist.isEmpty() && !title.isEmpty()) queries.add(artist + " " + title);
+        if (!title.isEmpty()) queries.add(title);
+        if (!fileName.isEmpty()) queries.add(fileName);
+        java.util.Set<String> known = new java.util.HashSet<>();
+        for (String q : queries) known.addAll(List.of(norm(q).split(" ")));
+        known.remove("");
+        if (known.isEmpty()) return null;
+
+        JsonNode best = null;
+        double bestScore = 0;
+        int calls = 0;
+        for (String q : queries) {
+            if (calls++ >= 3) break;
+            JsonNode results;
+            try {
+                results = api.get(BASE + "/search?q=" + ApiClient.enc(q));
+            } catch (CatalogException e) {
+                continue;
+            }
+            for (JsonNode n : results) {
+                double score = verifiedScore(n, known, seconds, !artist.isEmpty());
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = n;
+                }
+            }
+            if (best != null && bestScore >= 4.5) break; // résultat sûr (artiste + synchronisé) : inutile de chercher plus
+        }
+        if (best == null) return null;
+        String song = best.path("artistName").asText("") + " – " + best.path("trackName").asText("");
+        String plain = text(best, "plainLyrics");
+        List<Line> synced = parse(best.path("syncedLyrics").asText(""));
+        double diff = Math.abs(best.path("duration").asDouble(0) - seconds);
+        if (!synced.isEmpty() && diff <= 3) {
+            return new Lyrics(synced, plain, false, SOURCE_LRCLIB, song, false);
+        }
+        List<Line> stretched = stretched(best, seconds);
+        if (!stretched.isEmpty()) return new Lyrics(stretched, plain, false, SOURCE_LRCLIB, song, true);
+        if (plain == null) plain = lyricsText(best);
+        return plain == null || plain.isBlank() ? null : new Lyrics(List.of(), plain, false, SOURCE_LRCLIB, song, false);
+    }
+
+    /** Score d'un résultat LRCLIB face aux mots connus du morceau (0 = refusé). */
+    static double verifiedScore(JsonNode n, java.util.Set<String> known, long seconds, boolean artistKnown) {
+        if (lyricsText(n).isBlank()) return 0;
+        String hitTitle = norm(n.path("trackName").asText("").replaceAll("\\s*[(\\[][^)\\]]*[)\\]]", ""));
+        if (hitTitle.isEmpty()) return 0;
+        List<String> titleWords = List.of(hitTitle.split(" "));
+        long covered = titleWords.stream().filter(known::contains).count();
+        if (covered < titleWords.size()) return 0; // un mot du titre trouvé absent de nos noms : autre chanson
+        List<String> artistWords = List.of(norm(n.path("artistName").asText("")).split(" "));
+        long artistHits = artistWords.stream().filter(w -> !w.isEmpty() && known.contains(w)).count();
+        boolean artistOk = artistHits > 0;
+        if (!artistOk && (artistKnown || titleWords.size() < 3)) return 0; // autre interprète, ou titre court : trop risqué
+        double ref = n.path("duration").asDouble(0);
+        if (seconds > 0 && ref > 0) {
+            double ratio = seconds / ref;
+            if (ratio < 0.75 || ratio > 1.33) return 0;
+        }
+        double diff = seconds > 0 && ref > 0 ? Math.abs(ref - seconds) : 30;
+        boolean synced = !n.path("syncedLyrics").asText("").isBlank();
+        return 1 + (artistOk ? 1.5 : 0) + titleWords.size() * 0.2 + (synced ? 1.5 : 0) + Math.max(0, 1 - diff / 30.0);
     }
 
     /** Artiste renseigné (pas « Artiste inconnu »). */
@@ -422,7 +536,8 @@ public final class LyricsService {
                 if (!rs.next()) return Optional.empty();
                 String synced = rs.getString(1);
                 boolean approximate = synced != null && synced.startsWith(APPROX_MARK);
-                return Optional.of(new Lyrics(parse(synced), rs.getString(2), rs.getInt(3) == 1, SOURCE_LRCLIB, null, approximate));
+                Lyrics l = new Lyrics(parse(synced), rs.getString(2), rs.getInt(3) == 1, SOURCE_LRCLIB, null, approximate);
+                return l.isEmpty() ? Optional.empty() : Optional.of(l); // un échec passé est retenté
             }
         } catch (SQLException e) {
             return Optional.empty();
@@ -430,6 +545,7 @@ public final class LyricsService {
     }
 
     private void store(String key, Lyrics l) {
+        if (l.isEmpty()) return; // rien trouvé : on retentera la prochaine fois (LRCLIB s'enrichit)
         StringBuilder lrc = new StringBuilder(l.approximate() ? APPROX_MARK + "\n" : "");
         for (Line line : l.lines()) {
             long ms = line.timeMs();

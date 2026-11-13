@@ -108,6 +108,34 @@ class LocalLyricsTest {
     }
 
     @Test
+    void cleansMessyImportedNames() {
+        assertEquals("FANNY ancrée à ton", LyricsService.cleanName("Zou.FANNY - ancrée à ton"));
+        assertEquals("REGAL avec toi", LyricsService.cleanName("REGAL avec toi11"));
+        assertEquals("BCBG ZOUK", LyricsService.cleanName("Zou.BCBG ZOUK (1)"));
+        assertEquals("", LyricsService.cleanName("Piste 14"));
+        assertEquals("", LyricsService.cleanName("Track 03"));
+        assertFalse(LyricsService.usableArtist("artist", "Track 15"));
+        assertFalse(LyricsService.usableArtist("ZOUK4", "Piste 04"));
+        assertFalse(LyricsService.usableArtist("Unknown", "MARIO-la 1ere fois"));
+        assertFalse(LyricsService.usableArtist("aj fille du soleil", "aj fille du soleil"));
+        assertTrue(LyricsService.usableArtist("Zou.FANNY", "Fanny - Ancrée à ton port"));
+    }
+
+    @Test
+    void verifiedMatchNeedsTitleWordsAndSameArtist() throws Exception {
+        java.util.Set<String> known = java.util.Set.of("jean", "marie", "ragald", "laisse", "moi", "te", "dire");
+        com.fasterxml.jackson.databind.JsonNode tayc = new com.fasterxml.jackson.databind.ObjectMapper().readTree(
+                "{\"artistName\":\"No Limit, Tayc\",\"trackName\":\"Laisse moi te dire\",\"duration\":224,\"plainLyrics\":\"x\"}");
+        assertEquals(0.0, LyricsService.verifiedScore(tayc, known, 224, true)); // même titre, autre interprète
+        com.fasterxml.jackson.databind.JsonNode other = new com.fasterxml.jackson.databind.ObjectMapper().readTree(
+                "{\"artistName\":\"Jean-Marie Ragald\",\"trackName\":\"Laisse moi partir\",\"duration\":224,\"plainLyrics\":\"x\"}");
+        assertEquals(0.0, LyricsService.verifiedScore(other, known, 224, true)); // « partir » absent de nos noms
+        com.fasterxml.jackson.databind.JsonNode good = new com.fasterxml.jackson.databind.ObjectMapper().readTree(
+                "{\"artistName\":\"Jean-Marie Ragald\",\"trackName\":\"Laisse moi te dire\",\"duration\":225,\"plainLyrics\":\"x\"}");
+        assertTrue(LyricsService.verifiedScore(good, known, 224, true) > 0);
+    }
+
+    @Test
     void stripsTrackNumberOnlyFromFileNameTitles() {
         Path file = dir.resolve("09 Nothing gonna change my love for you.mp3");
         assertEquals("Nothing gonna change my love for you",
