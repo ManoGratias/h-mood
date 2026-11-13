@@ -3,5 +3,5 @@ dist/
 *.class
 .idea/
 *.iml
-.vscode/
 hs_err_pid*.log
+donnees-test/

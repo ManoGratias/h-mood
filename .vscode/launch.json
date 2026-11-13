@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "H MOOD (application)",
+            "request": "launch",
+            "mainClass": "com.hmood.app.Launcher",
+            "projectName": "hmood",
+            "vmArgs": "-Xmx1024m"
+        },
+        {
+            "type": "java",
+            "name": "H MOOD (données de test séparées)",
+            "request": "launch",
+            "mainClass": "com.hmood.app.Launcher",
+            "projectName": "hmood",
+            "vmArgs": "-Xmx1024m -Dhmood.data.dir=${workspaceFolder}/donnees-test"
+        }
+    ]
+}
