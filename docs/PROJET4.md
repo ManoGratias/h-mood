@@ -4,6 +4,8 @@
 demandée par l'énoncé est regroupée dans le paquet **`com.hmood.projet4`** et dans trois écrans
 (connexion, *Catalogue IA*, *Administration*).
 
+Plan des classes (qui hérite de qui, et pourquoi) : [`PLAN_CLASSES.md`](PLAN_CLASSES.md).
+
 ## Socle : correspondance énoncé → code
 
 | Énoncé | Où | Comment |

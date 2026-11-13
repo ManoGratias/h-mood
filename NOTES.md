@@ -43,13 +43,23 @@ Erreurs réellement constatées pendant le développement de H MOOD avec l'IA (C
 | | | | |
 | | | | |
 
-## 3 questions pièges sur mon code ✍️
+## Plan des classes
 
-Demandées à l'IA, réponses écrites sans regarder le code :
+Proposé par l'IA : voir [`docs/PLAN_CLASSES.md`](docs/PLAN_CLASSES.md).
 
-1. 
-2. 
-3. 
+## 3 questions pièges sur mon code
+
+Questions posées par l'IA ; **mes réponses ✍️, écrites sans regarder le code** :
+
+1. Dans `IaRecommandeur.controler`, pourquoi utiliser un `LinkedHashSet` pour les morceaux retenus plutôt
+   qu'une `ArrayList` ou un `HashSet` ? Que se passerait-il si l'IA renvoyait deux fois le même identifiant ?
+   - Ma réponse : 
+2. Si on supprimait le sel dans `MotDePasse` (empreinte = SHA-256 du mot de passe seul), qu'est-ce qui
+   deviendrait possible pour quelqu'un qui récupère le fichier `projet4.ser` ?
+   - Ma réponse : 
+3. On ajoute un champ dans la classe `Auditeur` et on relance l'application : que devient l'ancien fichier
+   `projet4.ser`, et à quoi sert `serialVersionUID` ?
+   - Ma réponse : 
 
 ## Défi sans IA ✍️
 
