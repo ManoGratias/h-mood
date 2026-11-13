@@ -52,6 +52,10 @@ public final class LyricsOverlay extends StackPane {
     private int request;
     private Timeline scrollAnim;
     private String glow = "#ffffff";
+    /** Décalage appliqué aux horodatages (positif = paroles retardées), réglable et mémorisé par morceau. */
+    private long offsetMs;
+    private String offsetKey;
+    private Label offsetLabel;
 
     private final ChangeListener<Number> positionListener = (o, a, v) -> highlight(v.longValue());
     private final ChangeListener<Track> trackListener = (o, a, t) -> load(t);
@@ -125,6 +129,8 @@ public final class LyricsOverlay extends StackPane {
         labels.clear();
         lines = List.of();
         current = -2;
+        offsetMs = 0;
+        offsetLabel = null;
         linesBox.getChildren().clear();
         scroll.setVvalue(0);
         buildInfo(t, null);
@@ -182,14 +188,17 @@ public final class LyricsOverlay extends StackPane {
             return;
         }
         if (lyrics.synced() && !preview) {
-            buildInfo(t, "Paroles synchronisées · " + source + "\nClique sur une ligne pour y aller.");
+            buildInfo(t, (lyrics.approximate()
+                    ? "Synchronisation approximative · " + source + "\nTemps d'une autre version, adaptés à la durée de ton fichier."
+                    : "Paroles synchronisées · " + source) + "\nClique sur une ligne pour y aller.");
             addMatchedNote(t, lyrics);
+            addOffsetControls(t, lyrics.approximate());
             lines = lyrics.lines();
             for (Line line : lines) {
                 Label l = new Label(line.text().isBlank() ? "♪" : line.text());
                 l.getStyleClass().addAll("lyric-line", "lyric-future");
                 l.setWrapText(true);
-                l.setOnMouseClicked(e -> seekTo(line.timeMs()));
+                l.setOnMouseClicked(e -> seekTo(line.timeMs() + offsetMs));
                 labels.add(l);
                 linesBox.getChildren().add(l);
             }
@@ -211,11 +220,49 @@ public final class LyricsOverlay extends StackPane {
         linesBox.setPadding(new Insets(220, 20, 260, 10));
     }
 
+    /** Boutons pour recaler les paroles si elles sont en avance ou en retard sur le chant. */
+    private void addOffsetControls(Track t, boolean approximate) {
+        offsetKey = t.filePath() != null ? t.filePath() : Long.toString(t.id());
+        offsetMs = ctx.settings().lyricsOffset(offsetKey);
+        offsetLabel = Ui.label("", "lyrics-note");
+        Button earlier = offsetButton("−0,5 s", -500);
+        Button later = offsetButton("+0,5 s", 500);
+        Button reset = offsetButton("0", 0);
+        HBox row = new HBox(6, earlier, later, reset, offsetLabel);
+        row.setAlignment(Pos.CENTER_LEFT);
+        Label hint = Ui.label(approximate
+                ? "Paroles en avance sur le chant : +0,5 s. En retard : −0,5 s."
+                : "Décalage : +0,5 s si les paroles arrivent trop tôt, −0,5 s si elles arrivent trop tard.", "lyrics-note");
+        hint.setWrapText(true);
+        info.getChildren().addAll(hint, row);
+        updateOffsetLabel();
+    }
+
+    private Button offsetButton(String text, long delta) {
+        Button b = new Button(text);
+        b.getStyleClass().add("chip-button");
+        b.setMnemonicParsing(false);
+        b.setOnAction(e -> {
+            offsetMs = delta == 0 ? 0 : offsetMs + delta;
+            ctx.settings().setLyricsOffset(offsetKey, offsetMs);
+            updateOffsetLabel();
+            current = -2; // force le recalcul de la ligne en cours
+            highlight(ctx.player().positionMsProperty().get());
+        });
+        return b;
+    }
+
+    private void updateOffsetLabel() {
+        if (offsetLabel == null) return;
+        offsetLabel.setText(offsetMs == 0 ? "Décalage : aucun"
+                : String.format(java.util.Locale.FRANCE, "Décalage : %+.1f s", offsetMs / 1000.0));
+    }
+
     /** Paroles reconnues d'après le titre seul : on dit quelle chanson a été retenue, avec un moyen de corriger. */
     private void addMatchedNote(Track t, Lyrics lyrics) {
         if (lyrics.matchedSong() == null) return;
         Label note = Ui.label("Reconnu d'après le titre : « " + lyrics.matchedSong() + " »."
-                + (lyrics.synced() ? "" : "\nSynchronisation impossible : ton fichier est une autre version."), "lyrics-note");
+                + (lyrics.synced() ? "" : "\nPas de version synchronisée de durée proche : paroles sans défilement."), "lyrics-note");
         note.setWrapText(true);
         Button wrong = new Button("Pas la bonne chanson ?");
         wrong.getStyleClass().add("chip-button");
@@ -270,7 +317,7 @@ public final class LyricsOverlay extends StackPane {
 
     private void highlight(long positionMs) {
         if (lines.isEmpty()) return;
-        int index = LyricsService.indexAt(lines, positionMs + 250); // léger avance : la ligne s'allume au bon moment
+        int index = LyricsService.indexAt(lines, positionMs - offsetMs + 250); // légère avance : la ligne s'allume au bon moment
         if (index == current) return;
         current = index;
         for (int i = 0; i < labels.size(); i++) {

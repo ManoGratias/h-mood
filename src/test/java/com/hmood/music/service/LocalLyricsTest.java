@@ -85,6 +85,29 @@ class LocalLyricsTest {
     }
 
     @Test
+    void otherVersionIsStretchedToTheFileDuration() throws Exception {
+        String song = "Say you say me say it for always that is the way it should be";
+        String synced = "{\"artistName\":\"Lionel Richie\",\"trackName\":\"Say You, Say Me\",\"duration\":200,"
+                + "\"plainLyrics\":\"" + song + "\",\"syncedLyrics\":\"[00:10.00] Say you, say me\\n[01:40.00] Say it for always\"}";
+        Lyrics l = LyricsService.pickByConsensus(results(synced,
+                entry("Lionel Richie", "Say You Say Me", 300, song),
+                entry("Cover", "Say You Say Me", 280, song)), "say you say me", 240);
+        assertTrue(l.synced());
+        assertTrue(l.approximate());
+        assertEquals(12_000, l.lines().get(0).timeMs());   // 10 s × 240/200
+        assertEquals(120_000, l.lines().get(1).timeMs());  // 100 s × 240/200
+    }
+
+    @Test
+    void tooDifferentDurationsAreNotStretched() throws Exception {
+        com.fasterxml.jackson.databind.JsonNode n = new com.fasterxml.jackson.databind.ObjectMapper().readTree(
+                "{\"duration\":120,\"syncedLyrics\":\"[00:10.00] a\"}");
+        assertTrue(LyricsService.stretched(n, 300).isEmpty());
+        assertEquals(1, LyricsService.stretched(n, 130).size());
+        assertEquals(1, LyricsService.parse("[hm:approx]\n[00:01.00] x").size());
+    }
+
+    @Test
     void stripsTrackNumberOnlyFromFileNameTitles() {
         Path file = dir.resolve("09 Nothing gonna change my love for you.mp3");
         assertEquals("Nothing gonna change my love for you",

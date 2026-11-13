@@ -830,10 +830,10 @@
 .lyrics-artist { -fx-font-size: 16px; -fx-text-fill: rgba(255,255,255,0.75); }
 .lyrics-note { -fx-font-size: 12px; -fx-text-fill: rgba(255,255,255,0.55); }
 .lyrics-cover { -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 40, 0.2, 0, 14); }
-.lyric-line { -fx-font-size: 28px; -fx-font-weight: bold; -fx-cursor: hand; -fx-line-spacing: 2; }
+.lyric-line { -fx-font-size: 26px; -fx-font-weight: normal; -fx-cursor: hand; -fx-line-spacing: 2; }
 .lyric-future { -fx-text-fill: rgba(255,255,255,0.38); }
 .lyric-past { -fx-text-fill: rgba(255,255,255,0.22); }
-.lyric-current { -fx-text-fill: white; -fx-font-size: 32px; }
+.lyric-current { -fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold; }
 .lyric-line:hover { -fx-text-fill: rgba(255,255,255,0.85); }
 .lyric-plain { -fx-font-size: 19px; -fx-text-fill: rgba(255,255,255,0.88); -fx-line-spacing: 6; }
 .lyric-message { -fx-font-size: 20px; -fx-text-fill: rgba(255,255,255,0.7); }

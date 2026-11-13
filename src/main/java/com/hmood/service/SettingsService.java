@@ -124,6 +124,21 @@ public final class SettingsService {
         prefs.set("keys.global_media", Boolean.toString(on));
     }
 
+    /** Décalage des paroles synchronisées d'un morceau, en millisecondes (positif = paroles retardées). */
+    public long lyricsOffset(String trackKey) {
+        return prefs.get("lyrics.offset." + trackKey).map(v -> {
+            try {
+                return Long.parseLong(v);
+            } catch (NumberFormatException e) {
+                return 0L;
+            }
+        }).orElse(0L);
+    }
+
+    public void setLyricsOffset(String trackKey, long offsetMs) {
+        prefs.set("lyrics.offset." + trackKey, Long.toString(offsetMs));
+    }
+
     /** Vue de « Ma musique » : "tracks" (liste) ou "folders" (par dossier). */
     public String libraryView() {
         return prefs.get("library.view").orElse("tracks");

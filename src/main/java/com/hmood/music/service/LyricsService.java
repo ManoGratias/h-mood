@@ -45,9 +45,14 @@ public final class LyricsService {
      * Paroles d'un morceau : {@code lines} vide si seules les paroles brutes existent. {@code matchedSong} :
      * chanson reconnue d'après le titre seul (« Artiste – Titre »), quand l'artiste du fichier est inconnu.
      */
-    public record Lyrics(List<Line> lines, String plain, boolean instrumental, String source, String matchedSong) {
+    public record Lyrics(List<Line> lines, String plain, boolean instrumental, String source, String matchedSong,
+                         boolean approximate) {
         public Lyrics(List<Line> lines, String plain, boolean instrumental, String source) {
-            this(lines, plain, instrumental, source, null);
+            this(lines, plain, instrumental, source, null, false);
+        }
+
+        public Lyrics(List<Line> lines, String plain, boolean instrumental, String source, String matchedSong) {
+            this(lines, plain, instrumental, source, matchedSong, false);
         }
 
         public boolean synced() {
@@ -66,6 +71,8 @@ public final class LyricsService {
     public static final String NEEDS_ARTIST = "artiste inconnu";
 
     private static final String BASE = "https://lrclib.net/api";
+    /** Première ligne du cache pour une synchronisation étirée (ignorée par le lecteur LRC). */
+    private static final String APPROX_MARK = "[hm:approx]";
     private static final Pattern TRACK_NUMBER = Pattern.compile("^\\d{1,3}\\s*[-._)]?\\s+(?=\\S)");
 
     static {
@@ -120,7 +127,10 @@ public final class LyricsService {
             if (loose != null && sameArtist(loose, artist)) {
                 String plain = text(loose, "plainLyrics");
                 if (plain == null) plain = String.join("\n", parse(loose.path("syncedLyrics").asText("")).stream().map(Line::text).toList());
-                Lyrics l = new Lyrics(List.of(), plain, loose.path("instrumental").asBoolean(false), SOURCE_LRCLIB);
+                List<Line> stretched = stretched(loose, seconds);
+                Lyrics l = stretched.isEmpty()
+                        ? new Lyrics(List.of(), plain, loose.path("instrumental").asBoolean(false), SOURCE_LRCLIB)
+                        : new Lyrics(stretched, plain, false, SOURCE_LRCLIB, null, true);
                 store(key, l);
                 return l;
             }
@@ -197,7 +207,33 @@ public final class LyricsService {
         }
         String plain = text(ref, "plainLyrics");
         if (plain == null) plain = lyricsText(ref);
+        // autre version : on reprend la version synchronisée de durée la plus proche, étirée à la durée du fichier
+        JsonNode closest = null;
+        for (int i : best) {
+            JsonNode n = exact.get(i);
+            if (n.path("syncedLyrics").asText("").isBlank()) continue;
+            if (closest == null || Math.abs(n.path("duration").asDouble(0) - seconds) < Math.abs(closest.path("duration").asDouble(0) - seconds)) {
+                closest = n;
+            }
+        }
+        List<Line> stretched = closest == null ? List.of() : stretched(closest, seconds);
+        if (!stretched.isEmpty()) {
+            return new Lyrics(stretched, plain, false, SOURCE_LRCLIB, song, true);
+        }
         return new Lyrics(List.of(), plain, false, SOURCE_LRCLIB, song);
+    }
+
+    /**
+     * Horodatages d'une autre version, mis à l'échelle de la durée du fichier (synchronisation approximative).
+     * Vide si la durée de référence est inconnue ou trop différente (écart de plus d'un tiers).
+     */
+    static List<Line> stretched(JsonNode n, long fileSeconds) {
+        List<Line> lines = parse(n.path("syncedLyrics").asText(""));
+        double ref = n.path("duration").asDouble(0);
+        if (lines.isEmpty() || ref <= 0 || fileSeconds <= 0) return List.of();
+        double ratio = fileSeconds / ref;
+        if (ratio < 0.75 || ratio > 1.33) return List.of();
+        return lines.stream().map(l -> new Line(Math.round(l.timeMs() * ratio), l.text())).toList();
     }
 
     private static String lyricsText(JsonNode n) {
@@ -384,7 +420,9 @@ public final class LyricsService {
             ps.setString(1, key);
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) return Optional.empty();
-                return Optional.of(new Lyrics(parse(rs.getString(1)), rs.getString(2), rs.getInt(3) == 1, SOURCE_LRCLIB));
+                String synced = rs.getString(1);
+                boolean approximate = synced != null && synced.startsWith(APPROX_MARK);
+                return Optional.of(new Lyrics(parse(synced), rs.getString(2), rs.getInt(3) == 1, SOURCE_LRCLIB, null, approximate));
             }
         } catch (SQLException e) {
             return Optional.empty();
@@ -392,7 +430,7 @@ public final class LyricsService {
     }
 
     private void store(String key, Lyrics l) {
-        StringBuilder lrc = new StringBuilder();
+        StringBuilder lrc = new StringBuilder(l.approximate() ? APPROX_MARK + "\n" : "");
         for (Line line : l.lines()) {
             long ms = line.timeMs();
             lrc.append(String.format("[%02d:%02d.%02d] %s%n", ms / 60_000, (ms / 1000) % 60, (ms % 1000) / 10, line.text()));
