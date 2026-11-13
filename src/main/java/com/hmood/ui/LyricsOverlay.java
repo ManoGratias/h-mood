@@ -56,6 +56,12 @@ public final class LyricsOverlay extends StackPane {
     private long offsetMs;
     private String offsetKey;
     private Label offsetLabel;
+    /**
+     * Extrait 30 s : on ne sait pas à quel moment de la chanson il commence. Tant que l'utilisateur n'a pas cliqué
+     * sur la ligne qu'il entend, aucune ligne n'est mise en avant (plutôt qu'une synchronisation fausse).
+     */
+    private boolean calageExtrait;
+    private boolean decalageConnu = true;
 
     private final ChangeListener<Number> positionListener = (o, a, v) -> highlight(v.longValue());
     private final ChangeListener<Track> trackListener = (o, a, t) -> load(t);
@@ -131,6 +137,8 @@ public final class LyricsOverlay extends StackPane {
         current = -2;
         offsetMs = 0;
         offsetLabel = null;
+        calageExtrait = false;
+        decalageConnu = true;
         linesBox.getChildren().clear();
         scroll.setVvalue(0);
         buildInfo(t, null);
@@ -187,18 +195,28 @@ public final class LyricsOverlay extends StackPane {
             }
             return;
         }
-        if (lyrics.synced() && !preview) {
-            buildInfo(t, (lyrics.approximate()
-                    ? "Synchronisation approximative · " + source + "\nTemps d'une autre version, adaptés à la durée de ton fichier."
-                    : "Paroles synchronisées · " + source) + "\nClique sur une ligne pour y aller.");
+        if (lyrics.synced()) {
+            calageExtrait = preview;
+            if (preview) {
+                buildInfo(t, "Paroles synchronisées · " + source + "\nExtrait 30 s : clique sur la ligne que tu entends, "
+                        + "la suite se met en gras au rythme de la musique (calage retenu pour ce morceau).");
+            } else {
+                buildInfo(t, (lyrics.approximate()
+                        ? "Synchronisation approximative · " + source + "\nTemps d'une autre version, adaptés à la durée de ton fichier."
+                        : "Paroles synchronisées · " + source) + "\nClique sur une ligne pour y aller.");
+            }
             addMatchedNote(t, lyrics);
             addOffsetControls(t, lyrics.approximate());
+            decalageConnu = !preview || ctx.settings().hasLyricsOffset(offsetKey);
             lines = lyrics.lines();
             for (Line line : lines) {
                 Label l = new Label(line.text().isBlank() ? "♪" : line.text());
                 l.getStyleClass().addAll("lyric-line", "lyric-future");
                 l.setWrapText(true);
-                l.setOnMouseClicked(e -> seekTo(line.timeMs() + offsetMs));
+                l.setOnMouseClicked(e -> {
+                    if (calageExtrait) caler(line); // extrait : impossible de sauter dans la chanson, on se cale
+                    else seekTo(line.timeMs() + offsetMs);
+                });
                 labels.add(l);
                 linesBox.getChildren().add(l);
             }
@@ -221,6 +239,17 @@ public final class LyricsOverlay extends StackPane {
     }
 
     /** Boutons pour recaler les paroles si elles sont en avance ou en retard sur le chant. */
+    /** Extrait 30 s : la ligne cliquée est celle chantée maintenant → décalage = position − début de la ligne. */
+    private void caler(Line line) {
+        long position = ctx.player().positionMsProperty().get();
+        offsetMs = position + 250 - line.timeMs();
+        decalageConnu = true;
+        ctx.settings().setLyricsOffset(offsetKey, offsetMs);
+        updateOffsetLabel();
+        current = -2;
+        highlight(position);
+    }
+
     private void addOffsetControls(Track t, boolean approximate) {
         offsetKey = t.filePath() != null ? t.filePath() : Long.toString(t.id());
         offsetMs = ctx.settings().lyricsOffset(offsetKey);
@@ -244,6 +273,7 @@ public final class LyricsOverlay extends StackPane {
         b.setMnemonicParsing(false);
         b.setOnAction(e -> {
             offsetMs = delta == 0 ? 0 : offsetMs + delta;
+            decalageConnu = true; // un réglage manuel vaut calage, y compris pour un extrait
             ctx.settings().setLyricsOffset(offsetKey, offsetMs);
             updateOffsetLabel();
             current = -2; // force le recalcul de la ligne en cours
@@ -316,7 +346,7 @@ public final class LyricsOverlay extends StackPane {
     }
 
     private void highlight(long positionMs) {
-        if (lines.isEmpty()) return;
+        if (lines.isEmpty() || !decalageConnu) return;
         int index = LyricsService.indexAt(lines, positionMs - offsetMs + 250); // légère avance : la ligne s'allume au bon moment
         if (index == current) return;
         current = index;

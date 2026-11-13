@@ -150,6 +150,11 @@ public final class SettingsService {
         }).orElse(0L);
     }
 
+    /** Vrai si un calage a déjà été enregistré pour ce morceau (utile pour les extraits 30 s). */
+    public boolean hasLyricsOffset(String trackKey) {
+        return prefs.get("lyrics.offset." + trackKey).isPresent();
+    }
+
     public void setLyricsOffset(String trackKey, long offsetMs) {
         prefs.set("lyrics.offset." + trackKey, Long.toString(offsetMs));
     }
