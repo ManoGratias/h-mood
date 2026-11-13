@@ -53,6 +53,13 @@ public final class PlayerService {
     /** Durée du retour progressif à la vitesse normale après une transition. */
     private static final double RATE_RECOVERY_SECONDS = 10;
 
+    /** Libère les lecteurs en arrière-plan (un fil par libération, pour qu'une libération bloquée n'empêche pas les suivantes). */
+    private static final java.util.concurrent.Executor DISPOSER = task -> {
+        Thread t = new Thread(task, "hmood-media-dispose");
+        t.setDaemon(true);
+        t.start();
+    };
+
     private final ObservableList<Track> queue = FXCollections.observableArrayList();
     private final ReadOnlyObjectWrapper<Track> current = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyBooleanWrapper playing = new ReadOnlyBooleanWrapper();
@@ -478,9 +485,7 @@ public final class PlayerService {
         if (outgoing != null) {
             MediaPlayer o = outgoing;
             outgoing = null;
-            o.volumeProperty().unbind();
-            o.setAudioSpectrumListener(null);
-            o.dispose();
+            release(o);
         }
     }
 
@@ -488,7 +493,7 @@ public final class PlayerService {
         if (nextPlayer != null) {
             MediaPlayer n = nextPlayer;
             nextPlayer = null;
-            n.dispose();
+            release(n);
         }
         nextReady = false;
         nextIndex = -1;
@@ -533,10 +538,29 @@ public final class PlayerService {
         if (mediaPlayer != null) {
             MediaPlayer mp = mediaPlayer;
             mediaPlayer = null;
-            mp.setAudioSpectrumListener(null);
-            mp.volumeProperty().unbind();
-            mp.dispose();
+            release(mp);
         }
+    }
+
+    /**
+     * Coupe un lecteur puis le libère hors du thread JavaFX : la libération native (GStreamer) peut
+     * rester bloquée sur un flux distant qui ne répond plus, ce qui figeait toute l'interface.
+     */
+    private static void release(MediaPlayer mp) {
+        mp.setAudioSpectrumListener(null);
+        mp.setOnEndOfMedia(null);
+        mp.setOnError(null);
+        mp.setOnReady(null);
+        mp.volumeProperty().unbind();
+        mp.setVolume(0);
+        DISPOSER.execute(() -> {
+            try {
+                mp.stop();
+                mp.dispose();
+            } catch (RuntimeException ignored) {
+                // déjà libéré ou moteur en erreur : rien à faire
+            }
+        });
     }
 
     private void notifyError(Track track, String message) {

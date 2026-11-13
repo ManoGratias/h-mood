@@ -638,6 +638,15 @@
 .card-play .icon { -fx-fill: -hm-on-accent; }
 .progress-indicator { -fx-progress-color: -hm-accent; }
 
+/* Ma musique : vue par dossier */
+.folder-card { -fx-pref-width: 230; -fx-min-width: 230; -fx-max-width: 230; -fx-padding: 16; }
+.folder-card .folder-icon .icon { -fx-fill: -hm-accent; }
+.folder-name { -fx-text-fill: -hm-text; -fx-font-weight: bold; -fx-font-size: 14px; }
+.folder-meta { -fx-text-fill: -hm-text-muted; -fx-font-size: 12px; }
+.folder-path { -fx-text-fill: -hm-text-muted; -fx-font-size: 11px; -fx-opacity: 0.8; }
+.folder-play { -fx-min-width: 38; -fx-min-height: 38; -fx-pref-width: 38; -fx-pref-height: 38; -fx-padding: 0; }
+.folder-bar { -fx-background-color: -hm-surface; -fx-background-radius: 16; -fx-border-color: -hm-border; -fx-border-radius: 16; -fx-padding: 10 14; }
+
 /* ------------------------------------------------------------- classements réels */
 
 .chart-tile {

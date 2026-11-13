@@ -36,7 +36,14 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
@@ -48,7 +55,10 @@ import javafx.stage.Window;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 /** Ma musique : import, recherche, organisation de la bibliothèque locale. */
@@ -71,6 +81,17 @@ public final class LibraryController implements PageController {
     @FXML private TableView<Track> table;
     @FXML private VBox emptyState;
     @FXML private Label formatsLabel;
+    @FXML private ToggleButton tracksViewButton;
+    @FXML private ToggleButton foldersViewButton;
+    @FXML private HBox folderBar;
+    @FXML private Label folderTitle;
+    @FXML private Label folderPath;
+    @FXML private ScrollPane foldersPane;
+    @FXML private FlowPane foldersFlow;
+
+    /** Vue par dossier active ; {@code openFolder} = dossier ouvert (null = grille des dossiers). */
+    private boolean folderView;
+    private String openFolder;
 
     private final AppContext ctx;
     private final ObservableList<Track> master = FXCollections.observableArrayList();
@@ -104,6 +125,20 @@ public final class LibraryController implements PageController {
         searchField.textProperty().addListener((o, a, b) -> applyFilter());
         formatsLabel.setText("Formats pris en charge : " + AudioFormats.DESCRIPTION);
 
+        ToggleGroup views = new ToggleGroup();
+        tracksViewButton.setToggleGroup(views);
+        foldersViewButton.setToggleGroup(views);
+        folderView = "folders".equals(ctx.settings().libraryView());
+        (folderView ? foldersViewButton : tracksViewButton).setSelected(true);
+        views.selectedToggleProperty().addListener((o, a, b) -> {
+            if (b == null) {
+                a.setSelected(true); // toujours une vue sélectionnée
+                return;
+            }
+            boolean folders = b == foldersViewButton;
+            if (folders != folderView) setFolderView(folders, null);
+        });
+
         buildColumns();
         buildRows();
         setupDragAndDrop();
@@ -124,9 +159,10 @@ public final class LibraryController implements PageController {
         } catch (RuntimeException e) {
             ctx.notify(e.getMessage());
         }
-        boolean empty = master.isEmpty();
-        emptyState.setVisible(empty);
-        table.setVisible(!empty);
+        if (openFolder != null && master.stream().noneMatch(t -> openFolder.equals(folderOf(t)))) {
+            openFolder = null; // dossier vidé ou retiré
+        }
+        refreshView();
         long tagged = master.stream().filter(t -> t.mood() != null).count();
         long totalMs = master.stream().mapToLong(Track::durationMs).sum();
         summaryLabel.setText(master.size() + " morceaux · " + Durations.human(totalMs) + " · "
@@ -136,7 +172,152 @@ public final class LibraryController implements PageController {
     private void applyFilter() {
         String query = searchField.getText();
         String filter = filterBox.getValue() == null ? FILTER_ALL : filterBox.getValue();
-        filtered.setPredicate(t -> LibraryService.matches(t, query) && matchesFilter(t, filter));
+        String folder = folderView ? openFolder : null;
+        filtered.setPredicate(t -> LibraryService.matches(t, query) && matchesFilter(t, filter)
+                && (folder == null || folder.equals(folderOf(t))));
+        if (folderView && openFolder == null) {
+            buildFolders();
+        }
+    }
+
+    // ------------------------------------------------------------------ vue par dossier
+
+    /** Dossier qui contient le fichier du morceau (null pour un titre sans fichier local). */
+    static String folderOf(Track t) {
+        if (t.filePath() == null || t.filePath().isBlank() || t.isRemote()) return null;
+        try {
+            Path parent = Path.of(t.filePath()).getParent();
+            return parent == null ? null : parent.toString();
+        } catch (java.nio.file.InvalidPathException e) {
+            return null;
+        }
+    }
+
+    static String folderName(String folder) {
+        Path path = Path.of(folder);
+        Path name = path.getFileName();
+        if (name == null) return folder;
+        Path parent = path.getParent();
+        if (name.toString().equals("hors-ligne") && parent != null && parent.getFileName() != null
+                && parent.getFileName().toString().equalsIgnoreCase("HMood")) {
+            return "Titres hors ligne"; // dossier des téléchargements Jamendo de l'appli
+        }
+        return name.toString();
+    }
+
+    private void setFolderView(boolean folders, String open) {
+        folderView = folders;
+        openFolder = folders ? open : null;
+        ctx.settings().setLibraryView(folders ? "folders" : "tracks");
+        if (folders != foldersViewButton.isSelected()) {
+            (folders ? foldersViewButton : tracksViewButton).setSelected(true);
+        }
+        refreshView();
+    }
+
+    /** Affiche la liste, la grille des dossiers ou le contenu d'un dossier selon l'état courant. */
+    private void refreshView() {
+        boolean empty = master.isEmpty();
+        boolean grid = folderView && openFolder == null;
+        emptyState.setVisible(empty);
+        table.setVisible(!empty && !grid);
+        foldersPane.setVisible(!empty && grid);
+        boolean inFolder = !empty && folderView && openFolder != null;
+        folderBar.setVisible(inFolder);
+        folderBar.setManaged(inFolder);
+        if (inFolder) {
+            List<Track> tracks = folderTracks(openFolder);
+            long ms = tracks.stream().mapToLong(Track::durationMs).sum();
+            folderTitle.setText(folderName(openFolder));
+            folderPath.setText(tracks.size() + " morceau" + (tracks.size() > 1 ? "x" : "") + " · "
+                    + Durations.human(ms) + " · " + openFolder);
+        }
+        applyFilter();
+    }
+
+    /** Grille des dossiers (ceux qui contiennent au moins un morceau correspondant à la recherche et au filtre). */
+    private void buildFolders() {
+        String query = searchField.getText();
+        String needle = query == null ? "" : query.trim().toLowerCase();
+        String filter = filterBox.getValue() == null ? FILTER_ALL : filterBox.getValue();
+        Map<String, List<Track>> byFolder = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (Track t : master) {
+            String folder = folderOf(t);
+            if (folder == null || !matchesFilter(t, filter)) continue;
+            boolean match = LibraryService.matches(t, query)
+                    || (!needle.isEmpty() && folderName(folder).toLowerCase().contains(needle));
+            if (match) byFolder.computeIfAbsent(folder, k -> new ArrayList<>()).add(t);
+        }
+        foldersFlow.getChildren().clear();
+        if (byFolder.isEmpty()) {
+            Label none = new Label("Aucun dossier ne correspond à ce filtre.");
+            none.getStyleClass().add("muted");
+            foldersFlow.getChildren().add(none);
+            return;
+        }
+        byFolder.forEach((folder, tracks) -> foldersFlow.getChildren().add(folderCard(folder, tracks)));
+    }
+
+    private VBox folderCard(String folder, List<Track> tracks) {
+        HBox iconBox = new HBox(Icons.icon(Icons.FOLDER, 40));
+        iconBox.getStyleClass().add("folder-icon");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button play = new Button();
+        play.setGraphic(Icons.icon(Icons.PLAY, 18));
+        play.getStyleClass().addAll("card-play", "folder-play");
+        play.setTooltip(new Tooltip("Lire le dossier"));
+        play.setOnAction(e -> playFolder(folder, false));
+        HBox top = new HBox(iconBox, spacer, play);
+        top.setAlignment(Pos.CENTER_LEFT);
+
+        Label name = new Label(folderName(folder));
+        name.getStyleClass().add("folder-name");
+        name.setTextOverrun(OverrunStyle.ELLIPSIS);
+        long ms = tracks.stream().mapToLong(Track::durationMs).sum();
+        Label meta = new Label(tracks.size() + " morceau" + (tracks.size() > 1 ? "x" : "") + " · " + Durations.human(ms));
+        meta.getStyleClass().add("folder-meta");
+        Label path = new Label(folder);
+        path.getStyleClass().add("folder-path");
+        path.setTextOverrun(OverrunStyle.LEADING_ELLIPSIS);
+        path.setTooltip(new Tooltip(folder));
+
+        VBox card = new VBox(8, top, name, meta, path);
+        card.getStyleClass().addAll("track-card", "folder-card");
+        card.setOnMouseClicked(e -> {
+            if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY) setFolderView(true, folder);
+        });
+        return card;
+    }
+
+    private List<Track> folderTracks(String folder) {
+        return master.stream().filter(t -> folder.equals(folderOf(t)))
+                .sorted((a, b) -> a.filePath().compareToIgnoreCase(b.filePath()))
+                .toList();
+    }
+
+    private void playFolder(String folder, boolean shuffle) {
+        List<Track> tracks = new ArrayList<>(folderTracks(folder));
+        if (tracks.isEmpty()) return;
+        if (shuffle) Collections.shuffle(tracks);
+        ctx.player().play(tracks, 0);
+    }
+
+    @FXML
+    private void onFolderBack() {
+        setFolderView(true, null);
+    }
+
+    @FXML
+    private void onFolderPlay() {
+        if (openFolder == null) return;
+        List<Track> visible = new ArrayList<>(table.getItems());
+        if (!visible.isEmpty()) ctx.player().play(visible, 0);
+    }
+
+    @FXML
+    private void onFolderShuffle() {
+        if (openFolder != null) playFolder(openFolder, true);
     }
 
     private static boolean matchesFilter(Track t, String filter) {
@@ -402,11 +583,16 @@ public final class LibraryController implements PageController {
         chooser.setTitle("Importer un dossier de musique");
         File dir = chooser.showDialog(window());
         if (dir != null) {
-            runImport(List.of(dir.toPath()));
+            runImport(List.of(dir.toPath()), dir.toPath());
         }
     }
 
     private void runImport(List<Path> paths) {
+        runImport(paths, null);
+    }
+
+    /** {@code folder} : dossier importé, ouvert à la fin dans la vue par dossier. */
+    private void runImport(List<Path> paths, Path folder) {
         Task<ImportResult> task = new Task<>() {
             @Override
             protected ImportResult call() {
@@ -428,6 +614,7 @@ public final class LibraryController implements PageController {
             reload();
             ctx.bumpLibrary();
             ctx.notify(task.getValue().summary());
+            if (folder != null) showImportedFolder(folder);
         });
         task.setOnFailed(e -> {
             endImport();
@@ -436,6 +623,14 @@ public final class LibraryController implements PageController {
         Thread thread = new Thread(task, "hmood-import");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    /** Après l'import d'un dossier : ouvre ce dossier s'il contient directement des morceaux, sinon la grille. */
+    private void showImportedFolder(Path folder) {
+        String key = folder.toString();
+        String open = master.stream().map(LibraryController::folderOf)
+                .filter(f -> f != null && f.equalsIgnoreCase(key)).findFirst().orElse(null);
+        setFolderView(true, open);
     }
 
     private void endImport() {
@@ -448,7 +643,7 @@ public final class LibraryController implements PageController {
     }
 
     private void setupDragAndDrop() {
-        for (javafx.scene.Node target : List.of(table, emptyState)) {
+        for (javafx.scene.Node target : List.of(table, emptyState, foldersPane)) {
             target.setOnDragOver(e -> {
                 if (e.getDragboard().hasFiles()) {
                     e.acceptTransferModes(TransferMode.COPY);

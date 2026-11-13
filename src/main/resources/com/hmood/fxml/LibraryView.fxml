@@ -5,7 +5,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -25,6 +29,10 @@
     </HBox>
 
     <HBox alignment="CENTER_LEFT" spacing="10">
+        <HBox spacing="6" alignment="CENTER_LEFT">
+            <ToggleButton fx:id="tracksViewButton" text="Morceaux" styleClass="chip" mnemonicParsing="false"/>
+            <ToggleButton fx:id="foldersViewButton" text="Dossiers" styleClass="chip" mnemonicParsing="false"/>
+        </HBox>
         <TextField fx:id="searchField" styleClass="search-field" HBox.hgrow="ALWAYS"
                    promptText="Filtrer par titre, artiste, album, genre, humeur, année…"/>
         <ComboBox fx:id="filterBox" prefWidth="210"/>
@@ -35,8 +43,21 @@
         <Label fx:id="importLabel" styleClass="muted"/>
     </HBox>
 
+    <HBox fx:id="folderBar" styleClass="folder-bar" alignment="CENTER_LEFT" spacing="12" visible="false" managed="false">
+        <Button fx:id="folderBackButton" text="← Dossiers" styleClass="secondary-button" mnemonicParsing="false" onAction="#onFolderBack"/>
+        <VBox spacing="1" HBox.hgrow="ALWAYS" minWidth="0">
+            <Label fx:id="folderTitle" styleClass="card-title"/>
+            <Label fx:id="folderPath" styleClass="card-subtitle"/>
+        </VBox>
+        <Button text="Aléatoire" styleClass="secondary-button" mnemonicParsing="false" onAction="#onFolderShuffle"/>
+        <Button text="Lire le dossier" styleClass="primary-button" mnemonicParsing="false" onAction="#onFolderPlay"/>
+    </HBox>
+
     <StackPane VBox.vgrow="ALWAYS">
         <TableView fx:id="table"/>
+        <ScrollPane fx:id="foldersPane" fitToWidth="true" styleClass="page-scroll" visible="false">
+            <FlowPane fx:id="foldersFlow" hgap="16" vgap="16"/>
+        </ScrollPane>
         <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="10" visible="false">
             <Label styleClass="empty-title" text="Ta bibliothèque est vide"/>
             <Label styleClass="muted" text="Importe des fichiers audio ou un dossier — ou glisse-les directement ici."/>

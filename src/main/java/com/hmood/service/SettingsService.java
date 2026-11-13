@@ -124,6 +124,15 @@ public final class SettingsService {
         prefs.set("keys.global_media", Boolean.toString(on));
     }
 
+    /** Vue de « Ma musique » : "tracks" (liste) ou "folders" (par dossier). */
+    public String libraryView() {
+        return prefs.get("library.view").orElse("tracks");
+    }
+
+    public void setLibraryView(String view) {
+        prefs.set("library.view", view);
+    }
+
     public String displayName() {
         return prefs.displayName();
     }
