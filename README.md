@@ -6,6 +6,44 @@ Lecteur de musique locale qui propose la bonne musique selon ton humeur.
 > Version actuelle : **0.1.0 — MVP exécutable**. Tout ce qui est affiché fonctionne réellement ;
 > les modules pas encore développés sont marqués « bientôt » et le disent clairement.
 
+## Projet 4 (B3 IABD Java) — appli de musique avec playlist IA
+
+La partie demandée par l'énoncé (`docs/ENONCE_PROJET4.md`) est dans le paquet `com.hmood.projet4` :
+utilisateurs (`Utilisateur` abstraite → `Auditeur`, `Admin`), catalogue Jamendo en `Map` par genre,
+inscription/connexion (SHA-256 + sel), favoris et abonnements, interface `Recommandeur`
+(`MockRecommandeur` / `IaRecommandeur` avec l'`AiClient` du Projet 3, sortie contrôlée), sauvegarde par
+sérialisation, tests JUnit. **Correspondance détaillée énoncé → code : [`docs/PROJET4.md`](docs/PROJET4.md).**
+Notes de développement : [`NOTES.md`](NOTES.md).
+
+### Rangement du dossier
+
+```
+H_MOOD/
+├─ README.md, NOTES.md          présentation, notes Projet 4
+├─ H_MOOD.code-workspace        à ouvrir dans Cursor / VS Code (ou ouvrir le dossier)
+├─ .vscode/                     configurations de lancement « H MOOD (application) »
+├─ docs/                        énoncé, correspondance Projet 4, cahier des charges
+├─ pom.xml                      projet Maven (Java 21, JavaFX 21)
+├─ src/main/java/com/hmood/
+│  ├─ projet4/                  ← partie Projet 4 (modele, catalogue, compte, ia, persistance)
+│  ├─ controller/               écrans (dont CatalogueIaController, AdminController)
+│  └─ app, ui, music, player…   reste de l'application H MOOD
+├─ src/test/java/               tests JUnit (dont com/hmood/projet4)
+├─ lancer.ps1                   compile si besoin puis lance
+├─ creer-executable.ps1         crée dist\H MOOD\H MOOD.exe
+└─ assets/                      icône
+```
+
+### Ouvrir dans Cursor ou VS Code
+
+1. *Fichier → Ouvrir un dossier…* → `Bureau\H_MOOD` (ou double-cliquer `H_MOOD.code-workspace`).
+2. Installer l'extension proposée (*Extension Pack for Java*). Le JDK 21 est dans `~/tools` ; si VS Code
+   ne le trouve pas, régler `java.jdt.ls.java.home` sur `C:\Users\<toi>\tools\jdk-21.0.12.1+1`.
+3. *Exécuter et déboguer* → **H MOOD (application)**. Tests : onglet *Testing* ou `mvn test`.
+
+Variables d'environnement (jamais de clé dans le code) : `AI_API_KEY` (clé Groq, pour l'IA réelle),
+`AI_MODEL` (facultatif), `JAMENDO_CLIENT_ID` (ou à saisir dans Paramètres).
+
 ---
 
 ## 1. Lancer l'application

@@ -53,5 +53,4 @@ Demandées à l'IA, réponses écrites sans regarder le code :
 
 ## Défi sans IA ✍️
 
-Commande Admin « lister les utilisateurs inscrits », codée à la main. (Indice : `ComptesService.getUtilisateurs()`
-existe déjà ; il reste l'affichage dans la page *Administration*.)
+Commande Admin « lister les utilisateurs inscrits », codée à la main en 10 minutes.
